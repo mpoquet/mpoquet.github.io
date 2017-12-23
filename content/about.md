@@ -20,6 +20,9 @@ Denis Trystram and Pierre-François Dutot.
 I am currently working in [Rennes](../img/rennes.jpg) with Anne-Cécile Orgerie
 and Martin Quinson in the Myriads team.
 
+## Curriculum
+- [Resume](/misc/resume.pdf)
+
 ## Research Interests
 - Modeling and Simulation
 - Resource Management
