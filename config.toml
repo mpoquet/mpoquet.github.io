@@ -14,7 +14,7 @@ disableRSS = true
 
 [params]
   # Shown in the home page
-  subtitle = "Computer Scientist / Software Engineer / Clumsy Speeedrunner / Cat Admirer"
+  subtitle = "Computer Scientist / Teacher / Software Engineer / Clumsy Speeedrunner / Cat Admirer"
   brand = "<img src=\"/img/me.jpg\" alt=\"Me\" style=\"width:100px;height:133px;\"> "
   #googleAnalytics = ""
   #disqus = ""
