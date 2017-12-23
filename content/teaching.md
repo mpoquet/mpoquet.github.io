@@ -13,7 +13,7 @@ I was in charge of:
 - evaluating the students' work
 
 ## 2015, 2016
-I then had the opportunity to teach introduction to algorithms and programming
+I had the opportunity to teach introduction to algorithms and programming
 to first-year science students.
 
 This experience was great as each year I could follow a single group of students
@@ -52,7 +52,7 @@ During my PhD, I was first teaching assistant of office automation classes.
 I worked with second-year Pharmacy students from Univ. Grenoble and
 was in charge of:
 
-- giving practical work to the entire class (≈ students)
+- giving practical work to the entire class (≈ 100 students)
 - designing the practical work
 - marking associated scripts
 
