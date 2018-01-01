@@ -6,8 +6,8 @@ draft: false
 
 - Millian Poquet:
   **Simulation approach for resource management.**
-  Thesis (TBP, defended Tuesday December 19th 2017).
-  [manuscript TODO](TODO)
+  PhD thesis.
+  [manuscript](/research/phd/manuscript.pdf)
   [defense slides](/research/phd/defense_slides.pdf)
 
 - Pierre-François Dutot, Millian Poquet, Denis Trystram:
