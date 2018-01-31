@@ -9,7 +9,7 @@ draft: false
 - millian.lastname@gmail.com
 
 ### Office
-(+33|0) 2 99 84 73 27
-Inria Rennes — F235 Orange
-Campus de Beaulieu, 263 av. du Général Leclerc
+(+33|0) 2 99 84 73 27  
+Inria Rennes — F235 Orange  
+Campus de Beaulieu, 263 av. du Général Leclerc  
 35042 Rennes cedex, France
