@@ -5,7 +5,8 @@ draft: false
 ---
 
 This page presents some of the projects I work on.  
-As this page may be outdated, feel free to give a look at my
+As this page is non-exhaustive and very likely outdated,
+feel free to give a look at my
 [GitHub](https://github.com/mpoquet) and
 [Inria's Gitlab](https://gitlab.inria.fr/mpoquet) pages.
 
@@ -25,12 +26,12 @@ Some links:
   [Inria's Gitlab](https://gitlab.inria.fr/batsim/batsim) /
   [GRICAD's Gitlab (CI)](https://gricad-gitlab.univ-grenoble-alpes.fr/batsim/batsim)
 - Initial paper — [hal-01333471v1](https://hal.archives-ouvertes.fr/hal-01333471v1)
-- My thesis (notably chapters 3 and 4) — TODO
+- My [thesis manuscript](/research/phd/manuscript.pdf) (notably chapters 3 and 4)
 
 ## SimGrid
 SimGrid is a simulation toolkit to study distributed systems.
 
 I used SimGrid during my PhD and conducted minor modifications to it.  
-I will work on improving model checking in SimGrid during my postdoc
+I will work on improving model checking in SimGrid during my postdoc, notably by
+working on checkpointing mechanisms.
 
-## TODO
