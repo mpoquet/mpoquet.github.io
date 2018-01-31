@@ -19,5 +19,5 @@ This repo contains two very different branches:
    Checking whether modifications work can be done via ``hugo server``.
 2. Generate the static website: ``hugo``.
 3. Switch to the ``master`` branch.
-4. Move the static to master's branch root: ``\cp -rf ./public/* ./``.
+4. Move the static website to master's branch root: ``\cp -rf ./public/* ./``.
 5. Git fun on both branches.
