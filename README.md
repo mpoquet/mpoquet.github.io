@@ -13,3 +13,11 @@ This repo contains two very different branches:
 3. Read this [tutorial](https://gohugo.io/hosting-and-deployment/hosting-on-github/) to host the website on github.  
    **Important note**: Setting the ``gh-pages`` branch as GitHub Pages source was impossible,  
    so I used ``code`` and ``master`` branches instead.
+
+### How to update this website?
+1. Hack files in the ``code`` branch.  
+   Checking whether modifications work can be done via ``hugo server``.
+2. Generate the static website: ``hugo``.
+3. Switch to the ``master`` branch.
+4. Move the static to master's branch root: ``\cp -rf ./public/* ./``.
+5. Git fun on both branches.
