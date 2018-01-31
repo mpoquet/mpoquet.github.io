@@ -1,18 +1,20 @@
 ---
-title: "Publications"
+title: "Research"
 date: 2017-12-22T20:18:31+01:00
 draft: false
 ---
 
+## Publications
+
 - Millian Poquet:
   **Simulation approach for resource management.**
-  PhD thesis.
+  PhD thesis (2017).
   [manuscript](/research/phd/manuscript.pdf)
   [defense slides](/research/phd/defense_slides.pdf)
 
 - Pierre-François Dutot, Millian Poquet, Denis Trystram:
   **Energy and Performance Trade-offs in EASY Backfilling.**
-  Submitted.
+  To be published.
   [reproduce](https://gitlab.inria.fr/mpoquet/article-energy-performance-tradeoffs-ccgrid-2018)
 
 - Pierre-François Dutot, Yiannis Georgiou, David Glesser, Laurent Lefèvre,
@@ -42,3 +44,14 @@ draft: false
   **Modulight: A Framework for Efficient Dynamic Interactive Scientific Visualization.**
   ICCS 2014: 692-702.
   [hal TODO](TODO)
+
+## Research Interest
+- Modeling and Simulation
+- Resource Management
+- Multi-Objective Optimization
+- High Performance Computing
+- Energy Efficiency
+- Experiment Workflows
+- Software Engineering
+- Parallel Programming
+- Visualization

@@ -17,8 +17,8 @@ I then went to [Grenoble](../img/grenoble.jpg) to learn how to snowboard and for
 This work took place in the amazing Datamove team under the supervision of
 Denis Trystram and Pierre-François Dutot.
 
-I am currently working in [Rennes](../img/rennes.jpg) with Anne-Cécile Orgerie
-and Martin Quinson in the Myriads team.
+I am currently working in [Rennes](../img/rennes.jpg) with Martin Quinson and
+Anne-Cécile Orgerie in the Myriads team.
 
 ## Curriculum
 - [Resume](/misc/resume.pdf)
