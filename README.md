@@ -17,7 +17,8 @@ This repo contains two very different branches:
 ### How to update this website?
 1. Hack files in the ``code`` branch.  
    Checking whether modifications work can be done via ``hugo server``.
-2. Generate the static website: ``hugo``.
+2. Generate the static website into the ``public`` directory: ``hugo``.
 3. Switch to the ``master`` branch.
-4. Move the static website to master's branch root: ``\cp -rf ./public/* ./``.
-5. Git fun on both branches.
+4. Move the static website to master's branch root:  
+   ``rsync -r --exclude='.git/' --exclude='public/' --delete-after public/ ./``
+5. Git fun: ``git add --all && git reset -- public/``
