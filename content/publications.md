@@ -33,6 +33,11 @@ draft: false
   Euro-Par Workshops 2015: 258-269.
   [hal-01230288](https://hal.archives-ouvertes.fr/hal-01230288)
 
+- Millian Poquet: **Optimisation multicritère de l'extension de réseaux.**
+  Master's internship report (2014).
+  [manuscript (french)](/research/m2/report.pdf)
+  [defense slides (french)](/research/m2/defense_slides.pdf)
+
 - Sébastien Limet, Millian Poquet, Sophie Robert:
   **Modulight: A Framework for Efficient Dynamic Interactive Scientific Visualization.**
   ICCS 2014: 692-702.
