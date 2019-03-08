@@ -1,0 +1,18 @@
+---
+title: R Markdown
+output: html_document
+---
+
+TODO: write this post. Code below is just a part of Rmd's hello world.
+
+```{r include=FALSE}
+library(tidyverse)
+library(viridis)
+```
+
+```{r}
+ggplot(mtcars, aes(x=wt,y=mpg,color=factor(cyl))) +
+    geom_point() +
+    scale_color_viridis(discrete=TRUE) +
+    theme_bw()
+```
