@@ -6,9 +6,10 @@
 .. link:
 .. description:
 .. type: text
+.. hidetitle: true
 
-Interests
-~~~~~~~~~
+Research Interests
+~~~~~~~~~~~~~~~~~~
 
 - Modeling and Simulation
 - Resource Management

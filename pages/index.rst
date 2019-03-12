@@ -6,5 +6,6 @@
 .. link:
 .. description:
 .. type: text
+.. hidetitle: true
 
 Write your page here.
