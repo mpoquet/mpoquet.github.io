@@ -1,4 +1,4 @@
-.. title: Contact
+.. title: Contact me
 .. slug: contact
 .. date: 2019-03-13 00:47:58 UTC+01:00
 .. tags:

@@ -1,4 +1,4 @@
-.. title: teaching
+.. title: Teaching
 .. slug: teaching
 .. date: 2019-03-13 00:57:38 UTC+01:00
 .. tags:
@@ -16,7 +16,6 @@ Summary
 - office_automation_ (2014)
 - tutoring_ (2010, 2011, 2013, 2014)
 
-|
 |
 
 .. _advanced_algo:

@@ -78,6 +78,7 @@ NAVIGATION_LINKS = {
     DEFAULT_LANG: (
         ("/research", "Research"),
         ("/teaching", "Teaching"),
+        ("/software", "Software"),
         ("/contact/", "Contact"),
         ("/blog/", "Blog"),
     ),
