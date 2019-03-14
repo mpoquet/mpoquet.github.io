@@ -1,5 +1,5 @@
 .. title: Why I use R — and why you should
-.. slug: why-r
+.. slug: index
 .. date: 2019-03-13 02:53:24 UTC+01:00
 .. tags: R, data analysis, data visualization, research
 .. category:
