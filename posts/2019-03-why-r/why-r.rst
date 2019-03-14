@@ -14,7 +14,8 @@ The goal of this post is to explain why.
 
 1. `My personal history with R`_ — AKA why I avoided R like the plague for long
 2. `Main mistakes to avoid in R`_ — Quick list for those in a hurry
-3. `Showcase`_ — Shameful propaganda about R's potential conciseness, tunability and visualization output quality
+3. `Showcase`_ — Shows R's potential conciseness, tunability and visualization output quality
+4. `Final word`_ — Shameful propaganda on why you should think about R to analyze and visualize data
 
 |
 
