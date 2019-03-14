@@ -210,13 +210,18 @@ TIMEZONE = "Europe/Paris"
 # One or more folders containing files to be copied as-is into the output.
 # The format is a dictionary of {source: relative destination}.
 # Default is:
-# FILES_FOLDERS = {'files': ''}
+FILES_FOLDERS = {
+    'files': '',
+    'posts/2019-03-why-r/data': '2019-03-why-r'
+}
 # Which means copy 'files' into 'output'
 
 # One or more folders containing code listings to be processed and published on
 # the site. The format is a dictionary of {source: relative destination}.
 # Default is:
-# LISTINGS_FOLDERS = {'listings': 'listings'}
+LISTINGS_FOLDERS = {
+    'posts/2019-03-why-r/code': 'listings/2019-03-why-r'
+}
 # Which means process listings from 'listings' into 'output/listings'
 
 # A mapping of languages to file-extensions that represent that language.

@@ -1,9 +1,0 @@
-rule rmd_to_html
-    command = ../src/call_rmarkdown.R $in $out
-
-rule html_to_nikolahtml
-    command = ../src/prepend_nikola_metadata.py $in $out
-
-# Why I use R
-build why-R.HTML: rmd_to_html why-R.Rmd
-build why-R.html: html_to_nikolahtml why-R.HTML
