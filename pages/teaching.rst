@@ -11,14 +11,13 @@
 Summary
 =======
 
-- advanced_algo_ (2017)
-- intro_algo_programming_ (2015, 2016)
-- office_automation_ (2014)
-- tutoring_ (2010, 2011, 2013, 2014)
+- `Advanced algorithms`_ (2017)
+- `Introduction to algorithms and programming`_ (2015, 2016)
+- `Office automation`_ (2014)
+- `Tutoring`_ (2010, 2011, 2013, 2014)
 
 |
 
-.. _advanced_algo:
 
 Advanced algorithms
 -------------------
@@ -29,7 +28,6 @@ I worked on lessons about advanced algorithms to ENSIMAG second-year students
 -  design of the practical work
 -  evaluation of the students' work
 
-.. _intro_algo_programming:
 
 Introduction to algorithms and programming
 ------------------------------------------
@@ -75,7 +73,6 @@ Here are resources about this class (in French).
    -  sokoban — `subject <./inf101/projet_sokoban.pdf>`__
       `skeleton <./inf101/sokoban.zip>`__
 
-.. _office_automation:
 
 Office automation
 -----------------
@@ -87,7 +84,6 @@ I worked with second-year Pharmacy students from Univ. Grenoble.
 - design of the practical work
 - evaluation of the students' work
 
-.. _tutoring:
 
 Tutoring
 --------
