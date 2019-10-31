@@ -1,3 +1,5 @@
+# DEPRECATED. nikola is now used instead.
+
 # mpoquet.github.io
 Website for Millian Poquet's personal pages.  
 This website is built with [hugo](https://gohugo.io/) and uses the [blackburn](https://themes.gohugo.io/blackburn/) theme.
