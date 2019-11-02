@@ -28,34 +28,33 @@ group.
 
 Here are resources about this class (in French).
 
--  `lecture slides <./inf101/slides.pdf>`__
+-  :download:`lecture slides <teaching/inf101/slides.pdf>`
 -  exercises (contact me for solutions):
 
-   -  introduction —
-      `sheet1 <./inf101/feuille1_questions.pdf>`__
-   -  conditions — `sheet2 <./inf101/feuille2_questions.pdf>`__
-   -  loops — `sheet3 <./inf101/feuille3_questions.pdf>`__
-   -  functions — `sheet4 <./inf101/feuille4_questions.pdf>`__
-   -  arrays — `sheet5 <./inf101/feuille5_questions.pdf>`__
-   -  strings — `sheet6 <./inf101/feuille6_questions.pdf>`__
-   -  pointers — `sheet7 <./inf101/feuille7_questions.pdf>`__
+   -  introduction — :download:`sheet1 <teaching/inf101/feuille1_questions.pdf>`
+   -  conditions — :download:`sheet2 <teaching/inf101/feuille2_questions.pdf>`
+   -  loops — :download:`sheet3 <teaching/inf101/feuille3_questions.pdf>`
+   -  functions — :download:`sheet4 <teaching/inf101/feuille4_questions.pdf>`
+   -  arrays — :download:`sheet5 <teaching/inf101/feuille5_questions.pdf>`
+   -  strings — :download:`sheet6 <teaching/inf101/feuille6_questions.pdf>`
+   -  pointers — :download:`sheet7 <teaching/inf101/feuille7_questions.pdf>`
 
 -  practical work (micro projects — contact me for solutions):
 
    -  (first sessions were simple bash and C exercises)
-   -  array sorting — `tp_sort.pdf <./inf101/tp_sort.pdf>`__
+   -  array sorting — :download:`tp_sort.pdf <teaching/inf101/tp_sort.pdf>`
    -  string manipulation, cryptography —
-      `tp_crypto.pdf <./inf101/tp_crypto.pdf>`__
-      `whatami.txt <./inf101/whatami.txt>`__
+      :download:`tp_crypto.pdf <teaching/inf101/tp_crypto.pdf>`
+      :download:`whatami.txt <teaching/inf101/whatami.txt>`
    -  1D and 2D cell automata —
-      `tp_cell_automata.pdf <./inf101/tp_cell_automata.pdf>`__
-   -  mines — `tp_mines.pdf <./inf101/tp_mines.pdf>`__
-   -  sudoku — `tp_sudoku.pdf <./inf101/tp_sudoku.pdf>`__
+      :download:`tp_cell_automata.pdf <teaching/inf101/tp_cell_automata.pdf>`
+   -  mines — :download:`tp_mines.pdf <teaching/inf101/tp_mines.pdf>`
+   -  sudoku — :download:`tp_sudoku.pdf <teaching/inf101/tp_sudoku.pdf>`
 
 -  mini projects (contact me for solutions)
 
-   -  sokoban — `subject <./inf101/projet_sokoban.pdf>`__
-      `skeleton <./inf101/sokoban.zip>`__
+   -  sokoban — :download:`subject <teaching/inf101/projet_sokoban.pdf>`
+      :download:`skeleton <teaching/inf101/sokoban.zip>`
 
 
 Office automation

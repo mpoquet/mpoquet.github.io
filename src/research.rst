@@ -46,12 +46,12 @@ Theses
 - Millian Poquet.
   **Simulation approach for resource management.**
   PhD thesis (2017).
-  `manuscript <./2017-phd-manuscript.pdf>`_
-  `slides <./2017-phd-slides.pdf>`_
+  :download:`manuscript <research/2017-phd-manuscript.pdf>`
+  :download:`slides <research/2017-phd-slides.pdf>`
   `TEL <https://tel.archives-ouvertes.fr/tel-01757245v2>`_
 
 - Millian Poquet.
   **Optimisation multicritère de l'extension de réseaux.**
   Master's internship report (2014).
-  `manuscript (french) <./2014-m2-report.pdf>`_
-  `slides (french) <./2014-m2-slides.pdf>`_
+  :download:`manuscript (french) <research/2014-m2-report.pdf>`
+  :download:`slides (french) <research/2014-m2-slides.pdf>`
