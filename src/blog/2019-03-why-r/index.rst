@@ -1,5 +1,5 @@
-Why I use R
-===========
+Why I use R (2019-03)
+=====================
 
 As I love programming and know many different languages,
 people are often surprised — to be polite — that I use R_ to analyze and visualize data.
@@ -9,7 +9,7 @@ The goal of this post is to explain why.
 1. `My personal history with R`_ — AKA why I avoided R like plague for long
 2. `Main mistakes to avoid in R`_ — Quick list for those in a hurry
 3. `Showcase`_ — Shows R's potential conciseness, tunability and visualization output quality
-4. `Final word`_ — Shameful propaganda on why you should think about R to analyze and visualize data
+4. `Final word`_ — Shameful propaganda on why you should think about using R
 
 My personal history with R
 ---------------------------
