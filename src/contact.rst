@@ -11,7 +11,6 @@ This is to hinder `spambots <https://en.wikipedia.org/wiki/Spambot#E-mail_spambo
 
 Office
 ------
-| (+33|0) 2 99 84 73 27
-| Inria Rennes — F235 Orange
-| Campus de Beaulieu, 263 av. du Général Leclerc
-| 35042 Rennes cedex, France
+| Bâtiment IMAG — Bureau 434
+| 700 Avenue Centrale
+| 38401 Saint-Martin-d'Hères, France
