@@ -3,8 +3,27 @@ Teaching
 
 .. contents:: :local:
 
-Advanced algorithms
--------------------
+
+DevOps methodology (2019)
+-------------------------
+
+I was in charge of a new DevOps module for a professional degree at University Institute of Technology of Grenoble (IUT2 Grenoble, LP ASSR).
+
+- deciding the pedagogical content
+- design of lecture/exercise/practical work/project/exam resources
+- giving lecture/exercise/practical work/project/exam
+- evaluation of the students' work
+
+Most resources are available on the
+`DevOps course Git repository <https://framagit.org/devops-course/devops-course/>`_.
+
+Big Data (2019)
+---------------
+
+I gave practical work sessions about Hadoop and Spark to ENSIMAG third-year students (≈ second-year master’s degree students).
+
+Advanced algorithms (2017)
+--------------------------
 
 I worked on lessons about advanced algorithms to ENSIMAG second-year students
 (≈ first-year master’s degree students). I was in charge of:
@@ -13,8 +32,8 @@ I worked on lessons about advanced algorithms to ENSIMAG second-year students
 -  evaluation of the students' work
 
 
-Introduction to algorithms and programming
-------------------------------------------
+Introduction to algorithms and programming (2015-2017)
+------------------------------------------------------
 
 I had the opportunity to teach introduction to algorithms and
 programming to first-year science students.
@@ -57,8 +76,8 @@ Here are resources about this class (in French).
       :download:`skeleton <teaching/inf101/sokoban.zip>`
 
 
-Office automation
------------------
+Office automation (2014)
+------------------------
 
 During my PhD, I was first teaching assistant of office automation classes.
 I worked with second-year Pharmacy students from Univ. Grenoble.
@@ -68,8 +87,8 @@ I worked with second-year Pharmacy students from Univ. Grenoble.
 - evaluation of the students' work
 
 
-Tutoring
---------
+Tutoring (2010-2014)
+--------------------
 
 During my studies, I worked at University Institute of Technology of Orléans (IUT Orléans).
 
