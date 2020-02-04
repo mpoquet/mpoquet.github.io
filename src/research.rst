@@ -55,3 +55,30 @@ Theses
   Master's internship report (2014).
   :download:`manuscript (french) <research/2014-m2-report.pdf>`
   :download:`slides (french) <research/2014-m2-slides.pdf>`
+
+Presentations, Tutorials…
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Millian Poquet, Adrien Faure.
+  **Tutorial on repeatable experiments with Nix.**
+  XUG (eXperimental User Group) Seminar, 2019-06.
+  :download:`introduction slides <research/2019-nix-tutorial-slides.pdf>`
+  `tutorial <https://nix-tutorial.gitlabpages.inria.fr/nix-tutorial/>`__
+  `contribute <https://gitlab.inria.fr/nix-tutorial>`__
+
+- Millian Poquet.
+  **Feedback on my PhD's Experimentation.**
+  XUG (eXperimental User Group) Seminar, 2019-04.
+  :download:`slides <research/2019-xug-feedback.pdf>`
+  :download:`reproduce slides <research/2019-xug-feedback.tar.xz>`
+
+- Millian Poquet.
+  **Converting System-Level Checkpoints of HPC Applications for their Simulation and Verification.**
+  `HAC SPECIS <http://hacspecis.gforge.inria.fr/>`__ meeting, 2018-05.
+  :download:`slides <research/2018-simulate-from-checkpoint.pdf>`
+  :download:`reproduce slides <research/2018-simulate-from-checkpoint.tar.xz>`
+
+- Millian Poquet.
+  **Energy vs Responsiveness Tradeoffs in EASY Backfilling.**
+  `Green Days@Sophia <http://perso.ens-lyon.fr/laurent.lefevre/greendayssophia/>`__, 2017-06.
+  :download:`slides <research/2017-green-days-slides.pdf>`
