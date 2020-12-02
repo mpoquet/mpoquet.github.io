@@ -3,18 +3,24 @@ Teaching
 
 .. contents:: :local:
 
+Software Quality (2019-2020)
+----------------------------
 
-DevOps methodology (2019)
--------------------------
-
-I was in charge of a new DevOps module for a professional degree at University Institute of Technology of Grenoble (IUT2 Grenoble, LP ASSR).
+I was in charge of a new software quality / DevOps module for a professional degree at University Institute of Technology of Grenoble (IUT2 Grenoble, LP ASSR).
 
 - deciding the pedagogical content
 - design of lecture/exercise/practical work/project/exam resources
 - giving lecture/exercise/practical work/project/exam
 - evaluation of the students' work
 
-Most resources are available on the
+Resources (in french) of the course given in 2020 are available on this website:
+
+- version control and Git — :download:`slides <teaching/quality/slides-version-control.pdf>`
+
+  - getting started — :download:`sheet1 <teaching/quality/vcs-1-getting-started.pdf>`
+  - branches and conflicts — :download:`sheet2 <teaching/quality/vcs-2-branches-conflicts.pdf>`
+
+Most resources of the course given in 2019 are available on the
 `DevOps course Git repository <https://framagit.org/devops-course/devops-course/>`_.
 
 Big Data (2019)
