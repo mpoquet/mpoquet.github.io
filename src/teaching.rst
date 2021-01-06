@@ -15,10 +15,15 @@ I was in charge of a new software quality / DevOps module for a professional deg
 
 Resources (in french) of the course given in 2020 are available on this website:
 
-- version control and Git — :download:`slides <teaching/quality/slides-version-control.pdf>`
+- version control and Git — :download:`slides <teaching/quality/slides-version-control.pdf>` `videos <https://www.youtube.com/playlist?list=PLX8t_yeFhVAkUciuUvmB77jIV826dLBRr>`_ `git <https://gitlab.com/git-course-mpoquet/version-control-course>`_
 
   - getting started — :download:`sheet1 <teaching/quality/vcs-1-getting-started.pdf>`
   - branches and conflicts — :download:`sheet2 <teaching/quality/vcs-2-branches-conflicts.pdf>`
+
+- software quality — :download:`slides <teaching/quality/slides-software-quality.pdf>` `videos <https://www.youtube.com/playlist?list=PLX8t_yeFhVAmvy04yCcGNO5MnZQ2V65B8>`_ `git <https://gitlab.com/mpoquet/software-quality-course>`_
+
+  - getting started with GitLab — :download:`sheet1 <teaching/quality/sq-1-gitlab.pdf>`
+  - Python good practices — :download:`sheet2 <teaching/quality/sq-2-python.pdf>`
 
 Most resources of the course given in 2019 are available on the
 `DevOps course Git repository <https://framagit.org/devops-course/devops-course/>`_.
