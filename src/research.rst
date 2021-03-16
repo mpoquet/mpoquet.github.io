@@ -59,6 +59,12 @@ Theses
 Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- Millian Poquet.
+  **SimGrid and Batsim Overview.**
+  MIAI Edge Intelligence Chair Seminar, 2021-03.
+  :download:`slides <research/2021-sg-batsim.pdf>`
+  :download:`reproduce slides <research/2021-sg-batsim.tar.xz>`
+
 - Millian Poquet, Adrien Faure.
   **Tutorial on repeatable experiments with Nix.**
   XUG (eXperimental User Group) Seminar, 2019-06.
