@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="terminal" baseProfile="full" viewBox="0 0 632 410" width="632" version="1.1">
+    <defs>
+        <termtosvg:template_settings xmlns:termtosvg="https://github.com/nbedos/termtosvg">
+            <termtosvg:screen_geometry columns="79" rows="24"/>
+            <termtosvg:animation type="css"/>
+        </termtosvg:template_settings>
+        <style type="text/css" id="generated-style"><![CDATA[#screen {
+                font-family: 'DejaVu Sans Mono', monospace;
+                font-style: normal;
+                font-size: 14px;
+            }
+
+        text {
+            dominant-baseline: text-before-edge;
+            white-space: pre;
+        }
+    ]]></style>
+        <style type="text/css" id="user-style">
+            .foreground {fill: #dcdfe4;}
+            .background {fill: #282c34;}
+            .color0 {fill: #282c34;}
+            .color1 {fill: #e06c75;}
+            .color2 {fill: #98c379;}
+            .color3 {fill: #e5c07b;}
+            .color4 {fill: #61afef;}
+            .color5 {fill: #c678dd;}
+            .color6 {fill: #56b6c2;}
+            .color7 {fill: #dcdfe4;}
+            .color8 {fill: #282c34;}
+            .color9 {fill: #e06c75;}
+            .color10 {fill: #98c379;}
+            .color11 {fill: #e5c07b;}
+            .color12 {fill: #61afef;}
+            .color13 {fill: #c678dd;}
+            .color14 {fill: #56b6c2;}
+            .color15 {fill: #dcdfe4;}
+
+            @page {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </defs>
+    <svg id="screen" width="632" height="408" viewBox="0 0 632 408" preserveAspectRatio="xMidYMin slice"><rect class="background" height="100%" width="100%" x="0" y="0"/><defs><g id="g1"><text class="color12" font-weight="bold" textLength="136" x="0">~/proj/nur-kapack</text><text class="foreground" textLength="8" x="136"> </text><text class="color2" textLength="48" x="144">master</text><text class="foreground" textLength="440" x="192"> $ nix-build . -A batsim                               </text></g><g id="g2"><text class="foreground" textLength="448" x="0">/nix/store/229p6j0xskxgxgbzpk62vr4im09hfi6y-batsim-4.0.0</text></g><g id="g3"><text class="color12" font-weight="bold" textLength="136" x="0">~/proj/nur-kapack</text><text class="foreground" textLength="8" x="136"> </text><text class="color2" textLength="48" x="144">master</text><text class="foreground" textLength="440" x="192"> $ tree result                                         </text></g><g id="g4"><text class="color14" font-weight="bold" textLength="48" x="0">result</text></g><g id="g5"><text class="foreground" textLength="32" x="0">&#9492;&#9472;&#9472; </text><text class="color12" font-weight="bold" textLength="24" x="32">bin</text></g><g id="g6"><text class="foreground" textLength="64" x="0">    &#9492;&#9472;&#9472; </text><text class="color10" font-weight="bold" textLength="48" x="64">batsim</text></g><g id="g7"><text class="foreground" textLength="152" x="0">1 directory, 1 file</text></g><g id="g8"><text class="background" textLength="8" x="0"> </text><text class="foreground" textLength="624" x="8">                                                                              </text></g></defs><g><use y="0" xlink:href="#g1"/><use y="17" xlink:href="#g2"/><use y="34" xlink:href="#g3"/><use y="51" xlink:href="#g4"/><use y="68" xlink:href="#g5"/><use y="85" xlink:href="#g6"/><use y="119" xlink:href="#g7"/><rect class="foreground" height="17" width="8" x="0" y="136"/><use y="136" xlink:href="#g8"/></g></svg>
+</svg>
