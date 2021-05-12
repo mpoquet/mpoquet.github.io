@@ -60,6 +60,13 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **Introduction to the Nix package manager.**
+  Datamove seminars, 2021-05.
+  :download:`slides <research/2021-nix-intro.pdf>`
+  :download:`reproduce slides <research/2021-nix-intro.tar.xz>`
+  `video (french) <https://www.youtube.com/watch?v=HSM9lu_S82o>`__
+
+- Millian Poquet.
   **SimGrid and Batsim Overview.**
   MIAI Edge Intelligence Chair Seminar, 2021-03.
   :download:`slides <research/2021-sg-batsim.pdf>`
