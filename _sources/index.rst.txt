@@ -1,0 +1,14 @@
+.. include:: about.rst
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   about.rst
+   research.rst
+   teaching.rst
+   software.rst
+   contact.rst
+   Blog <blog.rst>
+
+.. title :: Home
