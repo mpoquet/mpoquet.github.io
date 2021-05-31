@@ -60,6 +60,12 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **Nix in 5 minutes.**
+  LIG workshops, 2021-05.
+  :download:`slides <research/2021-nix-5min.pdf>`
+  :download:`reproduce slides <research/2021-nix-5min.tar.xz>`
+
+- Millian Poquet.
   **Introduction to the Nix package manager.**
   Datamove seminars, 2021-05.
   :download:`slides <research/2021-nix-intro.pdf>`
