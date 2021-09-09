@@ -95,14 +95,14 @@ It then defines a ``struct User`` that enables the runner to access the variable
 
 .. literalinclude:: runner.c
    :language: c
-   :lines: 33-41
+   :lines: 33-42
    :caption: :download:`runner.c <runner.c>`
 
 The code to load a ``user`` into a ``struct User`` uses ``dlmopen`` and ``dlsym``.
 
 .. literalinclude:: runner.c
    :language: c
-   :lines: 43-74
+   :lines: 44-78
    :emphasize-lines: 3, 13-14
    :caption: :download:`runner.c <runner.c>`
 
@@ -110,7 +110,7 @@ The rest of :download:`runner.c <runner.c>` defines a quick experiment to check 
 
 .. literalinclude:: runner.c
    :language: c
-   :lines: 76-92
+   :lines: 80-96
    :emphasize-lines: 9, 12
    :caption: :download:`runner.c <runner.c>`
 
@@ -118,14 +118,14 @@ Then it prints the various values (by calling the ``fullname`` function from the
 
 .. literalinclude:: runner.c
    :language: c
-   :lines: 94-104
+   :lines: 98-108
    :caption: :download:`runner.c <runner.c>`
 
-During its execution, ``runner`` changes the values of all global variables to make sure the desired ones (**and them only**) get updated.
+During its execution, ``runner`` changes the values of all global variables to make sure the desired ones get updated (**and them only**).
 
 .. literalinclude:: runner.c
    :language: c
-   :lines: 106-113
+   :lines: 110-117
    :caption: :download:`runner.c <runner.c>`
 
 Printings are done at the following steps.
