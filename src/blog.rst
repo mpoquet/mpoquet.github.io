@@ -4,6 +4,7 @@ Blog
 .. toctree::
    :maxdepth: 1
 
+   2021-09 Isolated dynamic library loading with dlmopen <blog/2021-09-isolated-dynamic-library-loading-with-dlmopen/index.rst>
    2021-05 Clean vectorial screenshots in your slides <blog/2021-05-terminal-in-slides/index.rst>
    2020-08 VCS adoption in open source projects <blog/2020-08-vcs-adoption-in-floss/index.rst>
    2020-02 Repeatable notebook experiment example <blog/2020-02-batsim-memory-usage-notebook/index.rst>
