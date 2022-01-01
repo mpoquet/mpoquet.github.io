@@ -10,5 +10,6 @@
    software.rst
    contact.rst
    Blog <blog.rst>
+   Miam <miam.rst>
 
 .. title :: Home
