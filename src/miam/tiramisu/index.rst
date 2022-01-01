@@ -3,6 +3,7 @@ Tiramisu
 
 Je fais régulièrement du tiramisu depuis quelques mois et je commence à être content de l'équilibre que donne cette recette donc je l'ai rédigée ici !
 C'est un tiramisu très classique qui ne s'écarte du standard que par sa garniture : un peu de chocolat rapé au lieu de poudre de cacao.
+Aucun n'alcool n'est utilisé.
 
 Cette recette utilise des œufs crus non pasteurisés,
 ce qui peut être risqué (notamment pour les jeunes enfants, personnes âgées, femmes enceintes ou si votre système immunitaire est affaibli).
@@ -14,7 +15,7 @@ Ingrédients (pour 4 à 6 personnes)
 Crème.
 
 - 250 g de mascarpone
-- 4 œufs moyens (33 g de blancs, 16.5 g de jaunes)
+- 4 œufs moyens (total de 128 g de blancs et de 70 g de jaunes)
 - 50 g de sucre (cassonade)
 - 1 sachet de sucre vanille (7.5 g)
 - 1 pincée de sel
