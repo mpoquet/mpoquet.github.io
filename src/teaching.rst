@@ -22,7 +22,7 @@ Resources (in french) of the course given in 2021 are available on this website.
 
 - software quality — :download:`slides <teaching/quality/slides-software-quality.pdf>` `videos (2020) <https://www.youtube.com/playlist?list=PLX8t_yeFhVAmvy04yCcGNO5MnZQ2V65B8>`_ `git <https://gitlab.com/mpoquet/software-quality-course>`_
 
-  - develop a go game while assuring a given quality level :download:`project <teaching/quality/sq-project-go.pdf>`
+  - develop a go game while ensuring a quality level — :download:`project <teaching/quality/sq-project-go.pdf>`
   - (outdated, 2020) getting started with GitLab — :download:`sheet1 <teaching/quality/sq-1-gitlab.pdf>`
   - (outdated, 2020) Python good practices — :download:`sheet2 <teaching/quality/sq-2-python.pdf>`
 
