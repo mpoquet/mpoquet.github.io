@@ -59,7 +59,7 @@ group.
 Here are resources about this class (in French).
 
 -  :download:`lecture slides <teaching/inf101/slides.pdf>`
--  exercises (contact me for solutions):
+-  exercises
 
    -  introduction — :download:`sheet1 <teaching/inf101/feuille1_questions.pdf>`
    -  conditions — :download:`sheet2 <teaching/inf101/feuille2_questions.pdf>`
@@ -69,7 +69,7 @@ Here are resources about this class (in French).
    -  strings — :download:`sheet6 <teaching/inf101/feuille6_questions.pdf>`
    -  pointers — :download:`sheet7 <teaching/inf101/feuille7_questions.pdf>`
 
--  practical work (micro projects — contact me for solutions):
+-  practical work (micro projects)
 
    -  (first sessions were simple bash and C exercises)
    -  array sorting — :download:`tp_sort.pdf <teaching/inf101/tp_sort.pdf>`
@@ -81,7 +81,7 @@ Here are resources about this class (in French).
    -  mines — :download:`tp_mines.pdf <teaching/inf101/tp_mines.pdf>`
    -  sudoku — :download:`tp_sudoku.pdf <teaching/inf101/tp_sudoku.pdf>`
 
--  mini projects (contact me for solutions)
+-  mini projects
 
    -  sokoban — :download:`subject <teaching/inf101/projet_sokoban.pdf>`
       :download:`skeleton <teaching/inf101/sokoban.zip>`
