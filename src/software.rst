@@ -12,9 +12,8 @@ Batsim
 ------
 
 Batsim is a simulator that focuses on the study of resource management policies in distributed systems.
-It emerged from the desire to conduct sounder experiments to assess
-platform-level resource management algorithms,
-and the desire tobridge the gap between theory and practice at this context.
+It emerged from the desire to conduct sounder experiments to assess platform-level resource management algorithms,
+and the desire to bridge the gap between theory and practice in this context.
 
 The first prototypes have been developed by Olivier Richard.
 I then quickly became the main Batsim developer during my PhD in the Datamove (ex MOAIS) team.
@@ -42,16 +41,18 @@ A software ecosystem exists around Batsim. Here are some notable projects:
 SimGrid
 -------
 
-`SimGrid <http://simgrid.gforge.inria.fr/>`__ is a simulation toolkit to
-study distributed systems.
+`SimGrid <http://simgrid.gforge.inria.fr/>`__ is a simulation toolkit to study distributed systems.
+As SimGrid is the simulation core used by Batsim,
+I work on SimGrid on a regular basis (mostly around simulation models issues and bugs when many SimGrid features are used together).
 
-I used SimGrid during my PhD and conducted minor modifications to it.
-
-My postdoc aims at improving the debugging functionalities of SimGrid,
-notably by allowing to start a simulation from a real world application
-checkpoint. To this end, I also work on `Remote
-SimGrid <https://github.com/simgrid/remote-simgrid>`__, which allows to
-run SimGrid simulations with several (Unix) processes.
+I worked on `Remote SimGrid <https://framagit.org/simgrid/remote-simgrid/>`__ during a postdoc in 2018-2019.
+This project enables the use of SimGrid with a **simulation** code split between several processes.
+This is done thanks to a server-client architecture, where the server has a SimGrid simulation instance in memory,
+and where clients trigger remote actions on the server.
+Remote SimGrid is intended as a core tool to **emulate** the execution distributed applications with SimGrid:
+real application code is executed on real processes, but the distributed platform they run on is simulated.
+The most direct use case for Remote SimGrid is the deterministic execution of distributed application test scenarios.
+In the very long run, it could be a base for model-checking distributed applications with SimGrid's model checker.
 
 netorcai
 --------
