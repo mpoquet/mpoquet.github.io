@@ -68,7 +68,7 @@ Showcase
 First, we need data to analyze and visualize.
 I found a CC0_ dataset about Olympics results `there <https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results>`_,
 let's talk about sports today.
-I generated a `data subset </2019-03-why-r/athlete_events_subset.csv.gz>`__ and hosted it here to make things easy.
+I generated a :download:`data subset <./athlete_events_subset.csv.gz>` and hosted it here to make things easy.
 Fun fact: While the original data has been gathered in R,
 I also used R to create a subset of the data with the following script.
 
@@ -78,7 +78,7 @@ I also used R to create a subset of the data with the following script.
    :lines: 21-
 
 From now on, I'll assume that you have downloaded the
-`data subset </2019-03-why-r/athlete_events_subset.csv.gz>`__
+:download:`data subset <./athlete_events_subset.csv.gz>`
 in your ``/tmp`` directory.
 What I usually do first with data is to load it (thanks, captain obvious) then
 to print a summary about it. Vanilla R is very straightforward about this.
