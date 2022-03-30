@@ -24,21 +24,25 @@ Conferences and Workshops
   CCGrid 2017: 381-390.
   `HAL <https://hal.archives-ouvertes.fr/hal-01533417>`__
   `reproduce <https://github.com/mpoquet/energybudget-expe>`__
+  `doi <https://doi.org/10.1109/CCGRID.2017.16>`__
 
 - Pierre-François Dutot, Michael Mercier, Millian Poquet, Olivier Richard.
   **Batsim: A Realistic Language-Independent Resources and Jobs Management Systems Simulator.**
   JSSPP 2016: 178-197.
   `HAL <https://hal.archives-ouvertes.fr/hal-01333471v1>`__
   `reproduce <https://gforge.inria.fr/projects/expe-batsim>`__
+  `doi <https://doi.org/10.1007/978-3-319-61756-5_10>`__
 
 - Pierre-François Dutot, Millian Poquet, Denis Trystram.
   **Communication Models Insights Meet Simulations.**
   Euro-Par Workshops 2015: 258-269.
   `HAL <https://hal.archives-ouvertes.fr/hal-01230288>`__
+  `doi <https://doi.org/10.1007/978-3-319-27308-2_22>`__
 
 - Sébastien Limet, Millian Poquet, Sophie Robert:
   **Modulight: A Framework for Efficient Dynamic Interactive Scientific Visualization.**
   ICCS 2014: 692-702.
+  `doi <http://dx.doi.org/10.1016/j.procs.2014.05.062>`__
 
 Theses
 ~~~~~~
