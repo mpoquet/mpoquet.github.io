@@ -64,6 +64,12 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **Coarse-Grained Simulation for Resource Management of Distributed Systems.**
+  IRIT seminar (ASR), 2022-04.
+  :download:`slides <research/2022-irit-asr-seminar.pdf>`
+  :download:`reproduce slides <research/2022-irit-asr-seminar.tar.xz>`
+
+- Millian Poquet.
   **Nix in 5 minutes.**
   LIG workshops, 2021-05.
   :download:`slides <research/2021-nix-5min.pdf>`
