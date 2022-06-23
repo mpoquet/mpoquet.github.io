@@ -5,7 +5,7 @@
 }:
 
 let
-  pythonPackages = pkgs.python37Packages;
+  pythonPackages = pkgs.python3Packages;
 
   packages = rec {
     website = pkgs.stdenv.mkDerivation rec {
