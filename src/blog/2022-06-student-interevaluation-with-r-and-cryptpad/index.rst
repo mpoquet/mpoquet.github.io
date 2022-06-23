@@ -169,6 +169,13 @@ A much more complex grading function can of course be used, for example by:
   For example giving a stronger weight to the teacher can make sense.
   The weight of the students can be the same for all students or depend on some value, for example on the grade of another test meant to evaluate their expertise level.
 
+Last words
+----------
+
+This experiment was interesting but next time I would like to design a more elaborate test to evaluate the overall work of each group rather than just their presentations.
+I think that properly evaluating how each student understood the topic of each presentation (here, CVEs) after all the presentations would be useful.
+It would enable to grade the work of each group depending on how they understood the specific topic they worked on, but also depending on how well this knowledge was shared with other groups (since usable data about how well each student understood each topic would be available).
+
 .. _CVE: https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures
 .. _R: https://en.wikipedia.org/wiki/R_(programming_language)
 .. _tidyverse: https://www.tidyverse.org/
