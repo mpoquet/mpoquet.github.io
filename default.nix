@@ -14,6 +14,7 @@ let
       src = ./.;
       buildInputs = [
         pythonPackages.sphinx
+        pygments-csv-lexer
         pkgs.gnumake
       ];
 
@@ -22,6 +23,21 @@ let
         mkdir -p $out
         cp -r build/html/* $out/
       '';
+    };
+    pygments-csv-lexer = pythonPackages.buildPythonApplication rec {
+      pname = "pygments-csv-lexer";
+      version = "0.1.3";
+
+      src = pythonPackages.fetchPypi {
+        inherit pname version;
+        sha256 = "sha256-PzDtgQ7AoHH79maOXIpSgk77Sa+JZmwflgKDcWPzJA8=";
+      };
+
+      propagatedBuildInputs = [
+        pythonPackages.pygments
+      ];
+
+      doCheck = false;
     };
   };
 in
