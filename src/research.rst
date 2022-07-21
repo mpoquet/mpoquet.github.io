@@ -18,6 +18,12 @@ Research Interests
 Conferences and Workshops
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- Quentin Guilloteau, Jonathan Bleuzen, Millian Poquet, Olivier Richard.
+  **Painless Transposition of Reproducible Distributed Environments with NixOS Compose.**
+  IEEE Cluster 2022.
+  `HAL <https://hal.archives-ouvertes.fr/hal-03723771v1>`__
+  `reproduce <https://zenodo.org/record/6568218>`__
+
 - Pierre-François Dutot, Yiannis Georgiou, David Glesser, Laurent Lefèvre,
   Millian Poquet, Issam Raïs.
   **Towards Energy Budget Control in HPC.**
