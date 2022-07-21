@@ -66,27 +66,27 @@ Presentations, Tutorials…
 - Millian Poquet.
   **Coarse-Grained Simulation for Resource Management of Distributed Systems.**
   IRIT seminar (ASR), 2022-04.
-  :download:`slides <research/2022-irit-asr-seminar.pdf>`
-  :download:`reproduce slides <research/2022-irit-asr-seminar.tar.xz>`
+  :download:`slides <research/220427-irit-asr-seminar.pdf>`
+  :download:`reproduce slides <research/220427-irit-asr-seminar.tar.xz>`
 
 - Millian Poquet.
   **Nix in 5 minutes.**
   LIG workshops, 2021-05.
-  :download:`slides <research/2021-nix-5min.pdf>`
-  :download:`reproduce slides <research/2021-nix-5min.tar.xz>`
+  :download:`slides <research/210527-lig-nix-5min.pdf>`
+  :download:`reproduce slides <research/210527-lig-nix-5min.tar.xz>`
 
 - Millian Poquet.
   **Introduction to the Nix package manager.**
   Datamove seminars, 2021-05.
-  :download:`slides <research/2021-nix-intro.pdf>`
-  :download:`reproduce slides <research/2021-nix-intro.tar.xz>`
+  :download:`slides <research/210512-nix-course.pdf>`
+  :download:`reproduce slides <research/210512-nix-course.tar.xz>`
   `video (french) <https://www.youtube.com/watch?v=HSM9lu_S82o>`__
 
 - Millian Poquet.
   **SimGrid and Batsim Overview.**
   MIAI Edge Intelligence Chair Seminar, 2021-03.
-  :download:`slides <research/2021-sg-batsim.pdf>`
-  :download:`reproduce slides <research/2021-sg-batsim.tar.xz>`
+  :download:`slides <research/210316-sg-energy-batsim.pdf>`
+  :download:`reproduce slides <research/210316-sg-energy-batsim.tar.xz>`
 
 - Millian Poquet, Adrien Faure.
   **Tutorial on repeatable experiments with Nix.**
@@ -98,14 +98,14 @@ Presentations, Tutorials…
 - Millian Poquet.
   **Feedback on my PhD's Experimentation.**
   XUG (eXperimental User Group) Seminar, 2019-04.
-  :download:`slides <research/2019-xug-feedback.pdf>`
-  :download:`reproduce slides <research/2019-xug-feedback.tar.xz>`
+  :download:`slides <research/190400-xug-experiment-feedback.pdf>`
+  :download:`reproduce slides <research/190400-xug-experiment-feedback.tar.xz>`
 
 - Millian Poquet.
   **Converting System-Level Checkpoints of HPC Applications for their Simulation and Verification.**
   `HAC SPECIS <http://hacspecis.gforge.inria.fr/>`__ meeting, 2018-05.
-  :download:`slides <research/2018-simulate-from-checkpoint.pdf>`
-  :download:`reproduce slides <research/2018-simulate-from-checkpoint.tar.xz>`
+  :download:`slides <research/180500-hacspecis-convert-checkpoints.pdf>`
+  :download:`reproduce slides <research/180500-hacspecis-convert-checkpoints.tar.xz>`
 
 - Millian Poquet.
   **Energy vs Responsiveness Tradeoffs in EASY Backfilling.**
