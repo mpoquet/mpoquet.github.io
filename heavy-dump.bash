@@ -8,8 +8,9 @@ cp -r --no-preserve=all result/* /tmp/site-dump/
 rm result
 
 git checkout gh-pages
-git reset --hard heavy-dump
+git reset --hard pre-dump
 cp -r --no-preserve=all /tmp/site-dump/* ./
-git add *
-git commit -m 'dump'
-git branch -f dump
+git add blog _downloads
+git commit -m 'heavy dump (tarballs, pdf...)'
+git branch -f heavy-dump
+git clean -f
