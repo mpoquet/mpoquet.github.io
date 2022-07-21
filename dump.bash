@@ -8,7 +8,7 @@ cp -r --no-preserve=all result/* /tmp/site-dump/
 rm result
 
 git checkout gh-pages
-git reset --hard ff6a506646e43e581640f5d7e4c53659fc75d13b
+git reset --hard fee35b7ce673814db7f3119f607a3210c7f89af5
 cp -r --no-preserve=all /tmp/site-dump/* ./
 git add *
 git commit -m 'dump'
