@@ -9,6 +9,7 @@
    teaching.rst
    software.rst
    contact.rst
+   Jobs <jobs.rst>
    Blog <blog.rst>
    Miam <miam.rst>
 
