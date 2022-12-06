@@ -1,0 +1,6 @@
+rule svg-to-png-white
+    command = inkscape -b "#ffffff" -o $out $in
+
+build tiny-sub-process-syscalls.png: svg-to-png-white tiny-sub-process-syscalls.svg
+build program-sub-process-expected-syscalls.png: svg-to-png-white program-sub-process-expected-syscalls.svg
+build program-sub-process-no-syscalls.png: svg-to-png-white program-sub-process-no-syscalls.svg

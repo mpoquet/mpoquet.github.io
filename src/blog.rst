@@ -4,6 +4,7 @@ Blog
 .. toctree::
    :maxdepth: 1
 
+   2022-11 printf, message loss and parallel debugging <blog/2022-12-printf-message-loss/index.rst>
    2022-06 Student inter-evaluation with R and cryptpad <blog/2022-06-student-interevaluation-with-r-and-cryptpad/index.rst>
    2021-09 Isolated dynamic library loading with dlmopen <blog/2021-09-isolated-dynamic-library-loading-with-dlmopen/index.rst>
    2021-05 Clean vectorial screenshots in your slides <blog/2021-05-terminal-in-slides/index.rst>
