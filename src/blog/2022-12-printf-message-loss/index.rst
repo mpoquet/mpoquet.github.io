@@ -9,10 +9,11 @@ This post explains why and gives tips to make *quick&dirty* debugging with ``pri
 
 Misleading ``printf`` calls example
 -----------------------------------
-The toy program we will play with today is timidly named ``program`` and has the following features.
+The toy program we will play with today is timidly named ``program`` and is made to highlight the printing errors you are likely to see with a code written by a student.
+``program`` has the following features.
 
 - Process parallelism: The program spawns a finite small number of processes. Here, 10 processes are created by the initial process (the initial process prints nothing unless a system error has occurred).
-- Action determinism: Unless a system error occurs (*e.g.*, cannot create a process), the program will always issue the exact same actions. Here the actions are independent: Each process simply prints its number (from 0 to 9) as a single ``printf`` call.
+- Action determinism: Unless a system error occurs (*e.g.*, cannot create a process), the program will always issue the exact same actions regarding ``printf`` calls. Here the actions are independent: Each sub process simply prints its number (from 0 to 9) followed by a newline as a single ``printf`` call.
 - Action order non-determinism: No guarantee on the order of the parallel actions.
 
 .. literalinclude:: program.c
@@ -23,25 +24,23 @@ Each execution of the program therefore calls ``printf`` the same number of time
 
 Here are two consistent executions of the program executed directly from my terminal by calling ``./program``. The environment I used is composed of kitty_ 0.26.2, zsh_ 5.9, NixOS_ 22.05, Linux_ 5.15.72, glibc_ 2.34.
 
-- ``0123456789``: All 10 messages are printed in *classical* order.
-- ``0341256789``: All 10 messages are printed but in another order.
+- ``0123456789`` (newlines omitted): All 10 messages are printed in *classical* order.
+- ``0341256789`` (newlines omitted): All 10 messages are printed but in another order.
 
 If you repeat the execution of the program, you'll very often see a display of inconsistent messages.
 
-- ``102346578``: ``printf("9")`` was executed but its message was lost.
-- ``012345679``: ``printf("8")`` was executed but its message was lost.
+- ``102346578`` (newlines omitted): ``9`` is missing but we are 100% sure that ``printf("9\n")`` has been executed.
+- ``012345679`` (newlines omitted): ``8`` is missing but we are 100% sure that ``printf("8\n")`` has been executed.
 
 Now let us say that you want to automate the counting of the number of bytes written by the program.
-This can be done by piping the result of the program to ``wc``, for example ``./program | wc --bytes``.
-If you do so, you always get this result.
-
-- ``0``
+This can be done by piping the result of the program to ``wc``, for example ``./program | wc -l``.
+If you do so, you always get either ``0``, ``1`` or ``2``.
 
 So, to wrap things up...
 
 - You are sure that your program always executes ``printf`` 10 times.
 - When you run it directly in your terminal, it is common that some messages are *lost*, that is to say not printed on your terminal.
-- When you pipe the output of your program to another program, all messages are *lost*...
+- When you pipe the output of your program to another program, almost all messages are *lost*...
 
 .. image:: ./wtf-is-going-on.jpg
   :alt: WTF is going on?
@@ -49,7 +48,7 @@ So, to wrap things up...
 What ``program`` does from a system perspective
 -----------------------------------------------
 
-From a system perspective, ``program`` should be very simple.
+From a system perspective, what ``program`` does should be very simple.
 Most of its code should consist in communicating with the operating system, which is done via `syscalls`_.
 Syscalls (or system calls) are the main mechanism to enable user space processes to communicate with the kernel.
 From the user process point of view, a syscall can be seen as a synchronous function call: The user process issues a syscall with some data, then waits for the *function* to return, then reads what the *function* has returned.
@@ -62,7 +61,7 @@ Here are the important linux syscalls that we can expect ``program`` to issue.
 - All processes (the initial process and the 10 sub processes) should issue an ``exit`` syscall to end their execution.
 
 To check whether ``program`` has the same behavior as the one we just described, we can create a new tiny software that exactly issues these syscalls, then check if the execution of ``tiny`` and ``program`` are similar.
-To make sure ``tiny`` is not bundled with any magical code at loading or exiting time, let us write it without C library.
+To make sure that ``tiny`` is not bundled with any magical code at loading or exiting time, let us write it without C library.
 System calls are actually quite simple to do in x86-64 assembly so let us write ``tiny`` in assembly 🙂.
 Various resources can be useful to do this, such as section A.2 "AMD64 Linux Kernel Conventions" of `System V ABI AMD64 Architecture Processor Supplement`_, or a `list of linux syscalls for x86-64 with their codes and parameters`_.
 
@@ -99,18 +98,22 @@ This new version (``tiny-wait``, that can be compiled with ``gcc -c tiny-wait.S 
    :diff: tiny.S
    :caption: diff of :download:`tiny-wait.S <tiny-wait.S>` over :download:`tiny.S <tiny.S>`
 
-So, what is the difference between ``program`` and ``tiny`` or ``tiny-small`` in terms of syscalls?
+So, what is the difference between ``program`` and ``tiny`` or ``tiny-wait`` in terms of syscalls?
 We can use a tool to trace the syscalls done by a process to observe what ``program`` does.
 strace_ is the standard tool to do such tracings.
-Calling ``strace -ff --output=out ./program`` enables to trace the system calls done by the process spawned by executing ``./program``, while also tracing all the subprocesses that ``program`` spawns — and logs will be separated in one file per process. Let us say that we could trace an execution that led to inconsistent prints: ``120345679`` was printed so the ``8`` message was lost. Here are the traces of the sub processes in charge of printing ``8`` and ``9``.
+Calling ``strace -ff --output=out ./program`` enables to trace the system calls done by the process spawned by executing ``./program``, while also tracing all the subprocesses that ``program`` spawns — and logs will be separated in one file per process.
+Let us say that we could trace an execution that led to inconsistent prints: ``120345679`` was printed.
+The messages are not ordered (``0`` after ``1`` and ``2``) but this is consistent since there is no guarantee on message order.
+However ``8`` does not appear at all and has been lost.
+Here are the traces of the sub processes in charge of printing ``8`` and ``9``.
 
 .. literalinclude:: out.8
-   :emphasize-lines: 6
-   :caption: Trace of the process that executed ``printf("8")``.
+   :emphasize-lines: 1
+   :caption: Trace of the process that executed ``printf("8\n")``.
 
 .. literalinclude:: out.9
-   :emphasize-lines: 6,7
-   :caption: Trace of the process that executed ``printf("9")``.
+   :emphasize-lines: 1,2
+   :caption: Trace of the process that executed ``printf("9\n")``.
 
 **Conclusion: The faulty process exited without calling** ``write`` **at all!**
 The operating system works as expected, but something fishy happens in the process that runs ``program``...
@@ -164,7 +167,7 @@ In addition to this, ``man exit`` indicates that "all open stdio streams are flu
 
    The ``exit`` function from the C standard library should not be confused with the ``exit`` linux syscall.
 
-   In fact, most linux syscalls are wrapped in function in the C standard library, but these functions can contain user space code that is executed before of after the system call. The libc functions can furthermore decide to use another system call than the one they are named after, for example as of glibc 2.34 the ``fork`` glibc function will prefer using a ``clone`` syscall variant rather than a ``fork`` syscall.
+   In fact, most linux syscalls are wrapped in function in the C standard library, but these functions can contain user space code that is executed before or after the system call. The libc functions can furthermore decide to use another system call than the one they are named after, for example as of glibc 2.34 the ``fork`` glibc function will prefer using a ``clone`` syscall variant rather than a ``fork`` syscall.
 
 A small experiment
 ------------------
@@ -289,13 +292,21 @@ Take home tips to prevent ``printf`` message loss
 
 We have seen that simply calling ``printf`` in a multiprocess program can easily lead to the loss of messages, which can be very painful if one wants to use such messages to debug one's program. When all processes terminate cleanly by calling the ``exit`` function or similar (*e.g.*, by returning from the ``main`` function), no messages are lost. In other cases, typically when at least one process crashes or deadlocks, messages can be lost unless:
 
-- You ensured that all ``printf`` message were followed by a call to ``fflush(stdout);``.
-- You ensured that buffering on ``stdout`` has been disabled by calling ``setvbuf(stdout, NULL, _IONBF, 0);``.
+- You ensured that all ``printf`` calls were followed by a call to ``fflush(stdout);``.
+- You ensured that buffering on ``stdout`` has been disabled. If you can change the source code of the program you execute, you can disable buffering manually by calling ``setvbuf(stdout, NULL, _IONBF, 0);`` at the beginning of your program. If you cannot or do not want to change the program source code, you can use tricks to force the program to execute a similar code at initialization time. For example, the stdbuf_ executable from GNU coreutils has been created exactly for this purpose. It works by forcing your program to load a dedicated library (``libstdbuf.so``) at initialization time by setting ``LD_PRELOAD`` before issuing an ``exec`` syscall (cf. `stdbuf source code`_). The ``libstdbuf.so`` library has a *constructor*, that is to say a code that is executed when the library is loaded (cf. `libstdbuf source code`_). This code essentially calls ``setvbuf`` according to the command-line arguments given to ``stdbuf``. Details on how ``LD_PRELOAD`` works are given in `man ld.so`_.
 
 If you have additional properties on the messages sent to ``printf`` (*e.g.*, that they are finished by a newline or that they are big enough), other ``stdio`` buffering policies may prevent message loss — but doing such a strong assumption on students' code is not reasonable IMHO.
 
 Finally, another solution could be to force the use of ``stderr`` rather than ``stdout``, as ``stderr`` is unbuffered by default.
 However this change is not trivial to do: As seen on the experiment done in this post, redirecting the file descriptors of the process before calling it does not help in any way. We could rewrite ``printf`` calls to ``fprintf`` on ``stderr`` with a macro such as ``#define printf(args...) fprintf(stderr, ##args)``, but I think that simply adding an ``setvbuf(stdout, NULL, _IONBF, 0);`` instruction at the beginning of the ``main`` function of a student code that has inconsistent prints would be more convenient and much more reliable.
+
+Acknowledgements, FAQ and misc. stuff
+-------------------------------------
+Thanks to Raphaël Bleuse, Arnaud Giersch, Michael Mercier, Clément Mommessin, Lucas Nussbaum and Samuel Thibault for their feedback on this post, which has improved its quality.
+
+**Question**. What is ``program``'s source code? :download:`real-program.c <real-program.c>`
+
+**Warning**. By default, zsh_ clears the current line before printing the prompt. This can lead to the loss of messages when the initial process does not wait for its children. This behavior can be disabled by calling ``setopt nopromptcr`` in your zsh setup.
 
 .. _kitty: https://github.com/kovidgoyal/kitty
 .. _zsh: https://en.wikipedia.org/wiki/Z_shell
@@ -313,3 +324,7 @@ However this change is not trivial to do: As seen on the experiment done in this
 .. _Dahu: https://www.grid5000.fr/w/Grenoble:Hardware#dahu
 .. _tmux: https://en.wikipedia.org/wiki/Tmux
 .. _`this experiment's gist`: https://gist.github.com/mpoquet/197ba306f7207b171d90cddf2b94fa0a
+.. _stdbuf: https://linux.die.net/man/1/stdbuf
+.. _`stdbuf source code`: https://github.com/coreutils/coreutils/blob/cfe4af661f9572ad4dbe5b3e01a178e04ff343ae/src/stdbuf.c#L387
+.. _`libstdbuf source code`: https://github.com/coreutils/coreutils/blob/cfe4af661f9572ad4dbe5b3e01a178e04ff343ae/src/libstdbuf.c#L138
+.. _`man ld.so`: https://man7.org/linux/man-pages/man8/ld.so.8.html
