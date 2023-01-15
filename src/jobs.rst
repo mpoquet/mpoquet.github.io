@@ -13,3 +13,7 @@ Projets (2022-2023)
 -------------------
 
 - :download:`Lighter : une alternative légère et descriptive à Beamer <jobs/projet-lighter.pdf>`
+- :download:`Suite d'outils pour QCM++ automatiques <jobs/projet-qcm.pdf>`
+- :download:`Outils pour l'enseignement des sémaphores <jobs/projet-simgrid-semaphore.pdf>`
+- :download:`Outil de création de figures pour l'enseignement en informatique <jobs/projet-generation-figures.pdf>`
+- :download:`Implémentation Rust de cgvg <jobs/projet-cgvg-rust.pdf>`
