@@ -70,6 +70,12 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **SimGrid and Batsim Overview.**
+  REGALE workshop, 2023-02.
+  :download:`slides <research/230223-sg-energy-batsim.pdf>`
+  :download:`rebuild slides <research/230223-sg-energy-batsim.tar.xz>`
+
+- Millian Poquet.
   **Coarse-Grained Simulation for Resource Management of Distributed Systems.**
   IRIT seminar (ASR), 2022-04.
   :download:`slides <research/220427-irit-asr-seminar.pdf>`
