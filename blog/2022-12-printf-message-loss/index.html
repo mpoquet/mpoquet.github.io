@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>printf and parallel code debugging &#8212; Millian Poquet</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Student inter-evaluation with R and cryptpad" href="../2022-06-student-interevaluation-with-r-and-cryptpad/index.html" />
+    <link rel="prev" title="Blog" href="../../blog.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+              <div class="related top">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../teaching.html">Teaching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html">Jobs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../blog.html">Blog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../miam.html">Miam</a></li>
+</ul>
+
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="printf-and-parallel-code-debugging">
+<h1><code class="docutils literal notranslate"><span class="pre">printf</span></code> and parallel code debugging<a class="headerlink" href="#printf-and-parallel-code-debugging" title="Permalink to this headline">¶</a></h1>
+<p>I recently spent a lot of time reviewing the code of students that learn how to develop parallel programs in C.
+These programs are often buggy, and some students rely on <code class="docutils literal notranslate"><span class="pre">printf</span></code> to <em>see</em> what happens in their parallel code.
+However, the messages obtained this way are misleading in many cases, as what is printed may not representative of what has been executed on the machine.
+This post explains why and gives tips to make <em>quick&amp;dirty</em> debugging with <code class="docutils literal notranslate"><span class="pre">printf</span></code> great again if you insist in not using a debugger (or if you don’t have debuggers on your university’s computers 😅).</p>
+<section id="misleading-printf-calls-example">
+<h2>Misleading <code class="docutils literal notranslate"><span class="pre">printf</span></code> calls example<a class="headerlink" href="#misleading-printf-calls-example" title="Permalink to this headline">¶</a></h2>
+<p>The toy program we will play with today is timidly named <code class="docutils literal notranslate"><span class="pre">program</span></code> and is made to highlight the printing errors you are likely to see with a code written by a student.
+<code class="docutils literal notranslate"><span class="pre">program</span></code> has the following features.</p>
+<ul class="simple">
+<li><p>Process parallelism: The program spawns a finite small number of processes. Here, 10 processes are created by the initial process (the initial process prints nothing unless a system error has occurred).</p></li>
+<li><p>Action determinism: Unless a system error occurs (<em>e.g.</em>, cannot create a process), the program will always issue the exact same actions regarding <code class="docutils literal notranslate"><span class="pre">printf</span></code> calls. Here the actions are independent: Each sub process simply prints its number (from 0 to 9) followed by a newline as a single <code class="docutils literal notranslate"><span class="pre">printf</span></code> call.</p></li>
+<li><p>Action order non-determinism: No guarantee on the order of the parallel actions.</p></li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">pseudo C code that represents <code class="docutils literal notranslate"><span class="pre">program</span></code></span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">switch</span><span class="p">(</span><span class="n">fork</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="mi">-1</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// fork error -&gt; print some error and exit</span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="mi">0</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// 1. there is uncertainty on what the sub process does here.</span>
+<span class="w">        </span><span class="c1">//    we are 100 % sure that it does not crash nor enter an infinite loop.</span>
+<span class="w">        </span><span class="c1">//    we are also 100 % sure that the sub process does not:</span>
+<span class="w">        </span><span class="c1">//    - spawn any processes or communicate with other processes</span>
+<span class="w">        </span><span class="c1">//    - print anything with stdio functions</span>
+
+<span class="w">        </span><span class="c1">// 2. we are 100% sure this code is reached.</span>
+<span class="w">        </span><span class="c1">//    all sub processes call printf.</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// 3. there is uncertainty on what the sub process does afterwards.</span>
+<span class="w">        </span><span class="c1">//    some sub processes do nothing, some execute some code,</span>
+<span class="w">        </span><span class="c1">//    some crash (e.g., segfault), some abort...</span>
+
+<span class="w">        </span><span class="c1">// 4. finally, the sub process stops its execution.</span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// exit the initial process</span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>Each execution of the program therefore calls <code class="docutils literal notranslate"><span class="pre">printf</span></code> the same number of times, and the content of the messages is the same. Only the order of the printed messages should change.</p>
+<p>Here are two consistent executions of the program executed directly from my terminal by calling <code class="docutils literal notranslate"><span class="pre">./program</span></code>. The environment I used is composed of <a class="reference external" href="https://github.com/kovidgoyal/kitty">kitty</a> 0.26.2, <a class="reference external" href="https://en.wikipedia.org/wiki/Z_shell">zsh</a> 5.9, <a class="reference external" href="https://nixos.org/">NixOS</a> 22.05, <a class="reference external" href="https://www.kernel.org/">Linux</a> 5.15.72, <a class="reference external" href="https://www.gnu.org/software/libc/">glibc</a> 2.34.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0123456789</span></code> (newlines omitted): All 10 messages are printed in <em>classical</em> order.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0341256789</span></code> (newlines omitted): All 10 messages are printed but in another order.</p></li>
+</ul>
+<p>If you repeat the execution of the program, you’ll very often see a display of inconsistent messages.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">102346578</span></code> (newlines omitted): <code class="docutils literal notranslate"><span class="pre">9</span></code> is missing but we are 100% sure that <code class="docutils literal notranslate"><span class="pre">printf(&quot;9\n&quot;)</span></code> has been executed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">012345679</span></code> (newlines omitted): <code class="docutils literal notranslate"><span class="pre">8</span></code> is missing but we are 100% sure that <code class="docutils literal notranslate"><span class="pre">printf(&quot;8\n&quot;)</span></code> has been executed.</p></li>
+</ul>
+<p>Now let us say that you want to automate the counting of the number of bytes written by the program.
+This can be done by piping the result of the program to <code class="docutils literal notranslate"><span class="pre">wc</span></code>, for example <code class="docutils literal notranslate"><span class="pre">./program</span> <span class="pre">|</span> <span class="pre">wc</span> <span class="pre">-l</span></code>.
+If you do so, you always get either <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">2</span></code>.</p>
+<p>So, to wrap things up…</p>
+<ul class="simple">
+<li><p>You are sure that your program always executes <code class="docutils literal notranslate"><span class="pre">printf</span></code> 10 times.</p></li>
+<li><p>When you run it directly in your terminal, it is common that some messages are <em>lost</em>, that is to say not printed on your terminal.</p></li>
+<li><p>When you pipe the output of your program to another program, almost all messages are <em>lost</em>…</p></li>
+</ul>
+<img alt="WTF is going on?" src="../../_images/wtf-is-going-on.jpg" />
+</section>
+<section id="what-program-does-from-a-system-perspective">
+<h2>What <code class="docutils literal notranslate"><span class="pre">program</span></code> does from a system perspective<a class="headerlink" href="#what-program-does-from-a-system-perspective" title="Permalink to this headline">¶</a></h2>
+<p>From a system perspective, what <code class="docutils literal notranslate"><span class="pre">program</span></code> does should be very simple.
+Most of its code should consist in communicating with the operating system, which is done via <a class="reference external" href="https://en.wikipedia.org/wiki/System_call">syscalls</a>.
+Syscalls (or system calls) are the main mechanism to enable user space processes to communicate with the kernel.
+From the user process point of view, a syscall can be seen as a synchronous function call: The user process issues a syscall with some data, then waits for the <em>function</em> to return, then reads what the <em>function</em> has returned.
+The main difference with an usual function call is that the function code is not in user space (contrary to a C library that would have been loaded at the program startup time) but in the kernel itself. Code in kernel space is executed with higher privileges. The exact mechanism used to issue a syscall depends on the combination of your CPU architecture and your operating system, but the underlying mechanism mostly relies on <a class="reference external" href="https://en.wikipedia.org/wiki/Interrupt">interrupts</a>. Interested readers can refer to <a class="reference external" href="https://www.cs.uaf.edu/2017/fall/cs301/lecture/11_17_syscall.html">how to issue a linux syscall depending on your architecture</a>.</p>
+<p>Here are the important linux syscalls that we can expect <code class="docutils literal notranslate"><span class="pre">program</span></code> to issue.</p>
+<ul class="simple">
+<li><p>The initial process should issue a syscall to spawn each <em>sub</em> process. Many syscalls can be used for this purpose such as <code class="docutils literal notranslate"><span class="pre">fork</span></code> or a <code class="docutils literal notranslate"><span class="pre">clone</span></code> variant.</p></li>
+<li><p>Each <em>sub</em> process should issue a syscall to tell the operating system that a message should be printed on the process standard output. This is typically done via a <code class="docutils literal notranslate"><span class="pre">write</span></code> syscall.</p></li>
+<li><p>All processes (the initial process and the 10 sub processes) should issue an <code class="docutils literal notranslate"><span class="pre">exit</span></code> syscall to end their execution.</p></li>
+</ul>
+<p>To check whether <code class="docutils literal notranslate"><span class="pre">program</span></code> has the same behavior as the one we just described, we can create a new tiny software that exactly issues these syscalls, then check if the execution of <code class="docutils literal notranslate"><span class="pre">tiny</span></code> and <code class="docutils literal notranslate"><span class="pre">program</span></code> are similar.
+To make sure that <code class="docutils literal notranslate"><span class="pre">tiny</span></code> is not bundled with any magical code at loading or exiting time, let us write it without C library.
+System calls are actually quite simple to do in x86-64 assembly so let us write <code class="docutils literal notranslate"><span class="pre">tiny</span></code> in assembly 🙂.
+Various resources can be useful to do this, such as section A.2 “AMD64 Linux Kernel Conventions” of <a class="reference external" href="https://refspecs.linuxfoundation.org/elf/x86_64-abi-0.99.pdf">System V ABI AMD64 Architecture Processor Supplement</a>, or a <a class="reference external" href="https://filippo.io/linux-syscall-table/">list of linux syscalls for x86-64 with their codes and parameters</a>.</p>
+<figure class="align-default" id="id2">
+<img alt="Figuration of the system calls issued by a ``tiny`` sub process over time." src="../../_images/tiny-sub-process-syscalls.png" />
+<figcaption>
+<p><span class="caption-text">Figuration of the system calls issued by a <code class="docutils literal notranslate"><span class="pre">tiny</span></code> sub process over time.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">x86-64 assembly implementation of <code class="docutils literal notranslate"><span class="pre">tiny</span></code>: <a class="reference download internal" download="" href="../../_downloads/924f72c352624078598f340696ea3aca/tiny.S"><code class="xref download docutils literal notranslate"><span class="pre">tiny.S</span></code></a></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-asm notranslate"><div class="highlight"><pre><span></span><span class="na">.text</span><span class="w"></span>
+<span class="w">    </span><span class="na">.global</span><span class="w"> </span><span class="no">_start</span><span class="w"></span>
+
+<span class="nl">_start:</span><span class="w"></span>
+<span class="w">    </span><span class="nf">movq</span><span class="w"> </span><span class="no">$0</span><span class="p">,</span><span class="w"> </span><span class="nv">%rbx</span><span class="w"> </span><span class="c1"># loop counter stays in %rbx for the initial process</span>
+
+<span class="w">    </span><span class="c1"># main loop of the initial process</span>
+<span class="nl">L:</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># puts counter on the stack so child process can access it</span>
+<span class="w">    </span><span class="nf">pushq</span><span class="w"> </span><span class="nv">%rbx</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># do a fork syscall</span>
+<span class="w">    </span><span class="nf">movq</span><span class="w">  </span><span class="no">$57</span><span class="p">,</span><span class="w"> </span><span class="nv">%rax</span><span class="w"> </span><span class="c1"># syscall number: 57 (fork)</span>
+<span class="w">    </span><span class="nf">syscall</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># fork returns 0 (sets %eax to 0) for the child process</span>
+<span class="w">    </span><span class="nf">cmp</span><span class="w"> </span><span class="no">$0</span><span class="p">,</span><span class="w"> </span><span class="nv">%eax</span><span class="w"></span>
+<span class="w">    </span><span class="nf">jz</span><span class="w"> </span><span class="no">C</span><span class="w"> </span><span class="c1"># child process jumps to C</span>
+<span class="w">    </span><span class="c1"># (initial process continues without jumping)</span>
+
+<span class="w">    </span><span class="c1"># loop until counter is 10</span>
+<span class="w">    </span><span class="nf">popq</span><span class="w"> </span><span class="nv">%rbx</span><span class="w"></span>
+<span class="w">    </span><span class="nf">incq</span><span class="w"> </span><span class="nv">%rbx</span><span class="w"></span>
+<span class="w">    </span><span class="nf">cmp</span><span class="w"> </span><span class="no">$10</span><span class="p">,</span><span class="w"> </span><span class="nv">%rbx</span><span class="w"></span>
+<span class="w">    </span><span class="nf">jnz</span><span class="w"> </span><span class="no">L</span><span class="w"></span>
+<span class="w">    </span><span class="nf">jmp</span><span class="w"> </span><span class="no">E</span><span class="w"> </span><span class="c1"># exit initial process</span>
+
+<span class="w">    </span><span class="c1"># child process &quot;entry point&quot;</span>
+<span class="nl">C:</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># top of the stack already contains the parent counter</span>
+<span class="w">    </span><span class="c1"># this code sets the top of the stack to counter + 48 (&#39;0&#39;)</span>
+<span class="w">    </span><span class="c1"># so that it contains an ascii value between &#39;0&#39; and &#39;9&#39;</span>
+<span class="w">    </span><span class="nf">popq</span><span class="w">  </span><span class="nv">%rax</span><span class="w"></span>
+<span class="w">    </span><span class="nf">addq</span><span class="w">  </span><span class="no">$48</span><span class="p">,</span><span class="w"> </span><span class="nv">%rax</span><span class="w"></span>
+<span class="w">    </span><span class="nf">pushq</span><span class="w"> </span><span class="nv">%rax</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># do a write syscall</span>
+<span class="w">    </span><span class="nf">movq</span><span class="w">  </span><span class="no">$1</span><span class="p">,</span><span class="w"> </span><span class="nv">%rax</span><span class="w"> </span><span class="c1"># syscall number: 1 (write)</span>
+<span class="w">    </span><span class="nf">movq</span><span class="w">  </span><span class="no">$1</span><span class="p">,</span><span class="w"> </span><span class="nv">%rdi</span><span class="w"> </span><span class="c1"># arg: write on stdout (1)</span>
+<span class="w">    </span><span class="nf">movq</span><span class="w">  </span><span class="nv">%rsp</span><span class="p">,</span><span class="w"> </span><span class="nv">%rsi</span><span class="w"> </span><span class="c1"># arg: buffer to write starts on the top of the stack</span>
+<span class="w">    </span><span class="nf">movq</span><span class="w">  </span><span class="no">$1</span><span class="p">,</span><span class="w"> </span><span class="nv">%rdx</span><span class="w"> </span><span class="c1"># arg: buffer is 1-byte long</span>
+<span class="w">    </span><span class="nf">syscall</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># do an exit syscall</span>
+<span class="nl">E:</span><span class="w">  </span><span class="nf">movq</span><span class="w">  </span><span class="no">$60</span><span class="p">,</span><span class="w"> </span><span class="nv">%rax</span><span class="w"> </span><span class="c1"># syscall number: 60 (exit)</span>
+<span class="w">    </span><span class="nf">movq</span><span class="w">  </span><span class="no">$0</span><span class="p">,</span><span class="w"> </span><span class="nv">%rdi</span><span class="w"> </span><span class="c1"># arg: status code 0</span>
+<span class="w">    </span><span class="nf">syscall</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>If you are running on x86-64, <code class="docutils literal notranslate"><span class="pre">tiny</span></code> can be compiled with this command: <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">-c</span> <span class="pre">tiny.S</span> <span class="pre">&amp;&amp;</span> <span class="pre">ld</span> <span class="pre">-o</span> <span class="pre">tiny</span> <span class="pre">tiny.o</span></code>.
+When we execute <code class="docutils literal notranslate"><span class="pre">tiny</span></code> directly in our terminal, it always prints the 10 expected messages.
+And when it is piped to <code class="docutils literal notranslate"><span class="pre">wc</span></code> via <code class="docutils literal notranslate"><span class="pre">./tiny</span> <span class="pre">|</span> <span class="pre">wc</span> <span class="pre">--bytes</span></code>, it always prints that 10 characters have been generated…
+<strong>We can therefore see that</strong> <code class="docutils literal notranslate"><span class="pre">tiny</span></code> <strong>prints messages consistently, while</strong> <code class="docutils literal notranslate"><span class="pre">program</span></code> <strong>does not!</strong></p>
+<p>This version of <code class="docutils literal notranslate"><span class="pre">tiny</span></code> is not perfect though.
+First, it does not handle the errors from syscalls at all (<code class="docutils literal notranslate"><span class="pre">fork</span></code> returning <code class="docutils literal notranslate"><span class="pre">-1</span></code> is not checked, <code class="docutils literal notranslate"><span class="pre">write</span></code> returning <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">-1</span></code> is not checked).
+Another problem is that the initial process can <code class="docutils literal notranslate"><span class="pre">exit</span></code> before some of its children have issued their <code class="docutils literal notranslate"><span class="pre">write</span></code> syscall.
+This can lead to some misleading prints when <code class="docutils literal notranslate"><span class="pre">tiny</span></code> is automatically executed many times in a row.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Misleading prints from two consecutives calls to <code class="docutils literal notranslate"><span class="pre">tiny</span></code> from <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">{1..100}</span> <span class="pre">;</span> <span class="pre">do</span> <span class="pre">./tiny</span> <span class="pre">&amp;&amp;</span> <span class="pre">echo</span> <span class="pre">;</span> <span class="pre">done</span></code>.</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">012356478</span>   <span class="c1"># initial process finished and echo printed its newline before the write of 9 has been done</span>
+<span class="mi">90123456897</span> <span class="c1"># the write of 9 is not lost though, it appears on one of the next lines</span>
+</pre></div>
+</div>
+</div>
+<p>This last problem can be fixed by forcing the initial process to wait for the termination of its child processes, for example by calling the <code class="docutils literal notranslate"><span class="pre">wait4</span></code> syscall until it returns <code class="docutils literal notranslate"><span class="pre">-1</span></code>. This is exactly what <code class="docutils literal notranslate"><span class="pre">tiny-wait</span></code> does, whose code difference over <code class="docutils literal notranslate"><span class="pre">tiny.S</span></code> is highlighted below.
+This new version (<code class="docutils literal notranslate"><span class="pre">tiny-wait</span></code>, that can be compiled with <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">-c</span> <span class="pre">tiny-wait.S</span> <span class="pre">&amp;&amp;</span> <span class="pre">ld</span> <span class="pre">-o</span> <span class="pre">tiny-wait</span> <span class="pre">tiny-wait.o</span></code>) always prints consistent messages, even when its execution is automated in sequence.</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">diff of <a class="reference download internal" download="" href="../../_downloads/25505cff6ee01b667518cf84a64e8052/tiny-wait.S"><code class="xref download docutils literal notranslate"><span class="pre">tiny-wait.S</span></code></a> over <a class="reference download internal" download="" href="../../_downloads/924f72c352624078598f340696ea3aca/tiny.S"><code class="xref download docutils literal notranslate"><span class="pre">tiny.S</span></code></a></span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /build/mpoquet.github.io/src/blog/2022-12-printf-message-loss/tiny.S</span><span class="w"></span>
+<span class="gi">+++ /build/mpoquet.github.io/src/blog/2022-12-printf-message-loss/tiny-wait.S</span><span class="w"></span>
+<span class="gu">@@ -23,6 +23,18 @@</span><span class="w"></span>
+<span class="w"> </span>    incq %rbx<span class="w"></span>
+<span class="w"> </span>    cmp $10, %rbx<span class="w"></span>
+<span class="w"> </span>    jnz L<span class="w"></span>
+<span class="gi">+</span><span class="w"></span>
+<span class="gi">+    # do a wait4 syscall</span><span class="w"></span>
+<span class="gi">+W:  movq $61, %rax # syscall number: 61 (wait4)</span><span class="w"></span>
+<span class="gi">+    movq $-1, %rdi # arg: wait any child</span><span class="w"></span>
+<span class="gi">+    movq $0, %rsi # arg: ignore wstatus</span><span class="w"></span>
+<span class="gi">+    movq $0, %rdx # arg: no options</span><span class="w"></span>
+<span class="gi">+    movq $0, %r10 # arg: ignore rusage</span><span class="w"></span>
+<span class="gi">+    syscall</span><span class="w"></span>
+<span class="gi">+</span><span class="w"></span>
+<span class="gi">+    # looping until the syscall returns a negative value</span><span class="w"></span>
+<span class="gi">+    cmp $0, %rax</span><span class="w"></span>
+<span class="gi">+    jns W</span><span class="w"></span>
+<span class="w"> </span>    jmp E # exit initial process<span class="w"></span>
+<span class="w"> </span>
+<span class="w"> </span>    # child process &quot;entry point&quot;<span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>So, what is the difference between <code class="docutils literal notranslate"><span class="pre">program</span></code> and <code class="docutils literal notranslate"><span class="pre">tiny</span></code> or <code class="docutils literal notranslate"><span class="pre">tiny-wait</span></code> in terms of syscalls?
+We can use a tool to trace the syscalls done by a process to observe what <code class="docutils literal notranslate"><span class="pre">program</span></code> does.
+<a class="reference external" href="https://en.wikipedia.org/wiki/Strace">strace</a> is the standard tool to do such tracings.
+Calling <code class="docutils literal notranslate"><span class="pre">strace</span> <span class="pre">-ff</span> <span class="pre">--output=out</span> <span class="pre">./program</span></code> enables to trace the system calls done by the process spawned by executing <code class="docutils literal notranslate"><span class="pre">./program</span></code>, while also tracing all the subprocesses that <code class="docutils literal notranslate"><span class="pre">program</span></code> spawns — and logs will be separated in one file per process.
+Let us say that we could trace an execution that led to inconsistent prints: <code class="docutils literal notranslate"><span class="pre">120345679</span></code> was printed.
+The messages are not ordered (<code class="docutils literal notranslate"><span class="pre">0</span></code> after <code class="docutils literal notranslate"><span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">2</span></code>) but this is consistent since there is no guarantee on message order.
+However <code class="docutils literal notranslate"><span class="pre">8</span></code> does not appear at all and has been lost.
+Here are the traces of the sub processes in charge of printing <code class="docutils literal notranslate"><span class="pre">8</span></code> and <code class="docutils literal notranslate"><span class="pre">9</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Trace of the process that executed <code class="docutils literal notranslate"><span class="pre">printf(&quot;8\n&quot;)</span></code>.</span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="hll">exit_group(1)                           = ?
+</span>+++ exited with 1 +++
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Trace of the process that executed <code class="docutils literal notranslate"><span class="pre">printf(&quot;9\n&quot;)</span></code>.</span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="hll">write(1, &quot;9\n&quot;, 2)                      = 2
+</span><span class="hll">exit_group(0)                           = ?
+</span>+++ exited with 0 +++
+</pre></div>
+</div>
+</div>
+<p><strong>Conclusion: The faulty process exited without calling</strong> <code class="docutils literal notranslate"><span class="pre">write</span></code> <strong>at all!</strong>
+The operating system works as expected, but something fishy happens in the process that runs <code class="docutils literal notranslate"><span class="pre">program</span></code>…</p>
+</section>
+<section id="buffering-in-libc-s-stdio">
+<h2>Buffering in libc’s <code class="docutils literal notranslate"><span class="pre">stdio</span></code><a class="headerlink" href="#buffering-in-libc-s-stdio" title="Permalink to this headline">¶</a></h2>
+<p>Let us look at what happens inside a <code class="docutils literal notranslate"><span class="pre">program</span></code> sub process during its execution.</p>
+<figure class="align-default" id="id8">
+<img alt="Figuration of the system calls done by a ``program`` sub process that ``write`` messages." src="../../_images/program-sub-process-expected-syscalls.png" />
+<figcaption>
+<p><span class="caption-text">Figuration of the system calls done by a <code class="docutils literal notranslate"><span class="pre">program</span></code> sub process that <code class="docutils literal notranslate"><span class="pre">write</span></code> messages.</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>We can see that <code class="docutils literal notranslate"><span class="pre">program</span></code> sub processes that write messages have a behavior very similar to <code class="docutils literal notranslate"><span class="pre">tiny</span></code>’s.
+The main difference is that the code of the user process is not fully defined by user-written code,
+but that some code such as <code class="docutils literal notranslate"><span class="pre">printf</span></code> is defined in the C standard library instead.
+glibc’s <code class="docutils literal notranslate"><span class="pre">printf</span></code> code is quite complex and does not call <code class="docutils literal notranslate"><span class="pre">write</span></code> directly.
+I do not give details on the various functions that glibc’s <code class="docutils literal notranslate"><span class="pre">printf</span></code> calls in this post, but interested readers can refer to an <a class="reference external" href="http://osteras.info/personal/2013/10/11/hello-world-analysis.html">hello world analysis</a> for this purpose.
+Now let us see what happens for <code class="docutils literal notranslate"><span class="pre">program</span></code> sub processes that do not <code class="docutils literal notranslate"><span class="pre">write</span></code> messages.</p>
+<figure class="align-default" id="id9">
+<img alt="Figuration of the system calls done by a ``program`` sub process that **does not** ``write`` messages." src="../../_images/program-sub-process-no-syscalls.png" />
+<figcaption>
+<p><span class="caption-text">Figuration of the system calls done by a <code class="docutils literal notranslate"><span class="pre">program</span></code> sub process that <strong>does not</strong> <code class="docutils literal notranslate"><span class="pre">write</span></code> messages.</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><strong>The source of our message loss is user space buffering from libc!</strong>
+<code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">stdio</span></code> indeed indicates that “The standard I/O library provides a simple and efficient <strong>buffered</strong> stream I/O interface”.
+<code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">setvbuf</span></code> contains valuable information on the available buffering modes, and defines the default buffering mode of <code class="docutils literal notranslate"><span class="pre">stdout</span></code> and <code class="docutils literal notranslate"><span class="pre">stderr</span></code> streams.</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">Introduction from <code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">setvbuf</span></code>.</span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>The three  types  of  buffering  available  are  unbuffered,  block
+buffered,  and line buffered.  When an output stream is unbuffered,
+information appears on the destination file or terminal as soon  as
+written;  when  it  is block buffered, many characters are saved up
+and written as a block; when it is line  buffered,  characters  are
+saved up until a newline is output or input is read from any stream
+attached to a terminal  device  (typically  stdin).   The  function
+fflush  may  be  used  to  force  the  block  out  early.   (See
+fclose.)
+
+Normally all files are block buffered.  If a  stream  refers  to  a
+terminal (as stdout normally does), it is line buffered.  The stan‐
+dard error stream stderr is always unbuffered by default.
+</pre></div>
+</div>
+</div>
+<p>In addition to this, <code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">exit</span></code> indicates that “all open stdio streams are flushed and closed” when the <code class="docutils literal notranslate"><span class="pre">exit</span></code> function from libc is called.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">exit</span></code> function from the C standard library should not be confused with the <code class="docutils literal notranslate"><span class="pre">exit</span></code> linux syscall.</p>
+<p>In fact, most linux syscalls are wrapped in function in the C standard library, but these functions can contain user space code that is executed before or after the system call. The libc functions can furthermore decide to use another system call than the one they are named after, for example as of glibc 2.34 the <code class="docutils literal notranslate"><span class="pre">fork</span></code> glibc function will prefer using a <code class="docutils literal notranslate"><span class="pre">clone</span></code> syscall variant rather than a <code class="docutils literal notranslate"><span class="pre">fork</span></code> syscall.</p>
+</div>
+</section>
+<section id="a-small-experiment">
+<h2>A small experiment<a class="headerlink" href="#a-small-experiment" title="Permalink to this headline">¶</a></h2>
+<p>Previous section showed that many parameters are important regarding the loss of messages in <code class="docutils literal notranslate"><span class="pre">stdio</span></code> buffers.</p>
+<ul class="simple">
+<li><p>What is behind the standard output of the process?</p></li>
+<li><p>How does the process terminate?</p></li>
+<li><p>Have the buffering mode of <code class="docutils literal notranslate"><span class="pre">stdio</span></code> streams been explicitly set by the process?</p></li>
+<li><p>Does the process calls <code class="docutils literal notranslate"><span class="pre">fflush</span></code> after calling <code class="docutils literal notranslate"><span class="pre">printf</span></code>?</p></li>
+</ul>
+<p>I propose to define, build and run many variants of <code class="docutils literal notranslate"><span class="pre">program</span></code> to clarify when messages are lost in <code class="docutils literal notranslate"><span class="pre">stdio</span></code> buffers.
+All the files involved in this experiment are available on <a class="reference external" href="https://gist.github.com/mpoquet/197ba306f7207b171d90cddf2b94fa0a">this experiment’s gist</a>.
+The skeleton that generates the variants is shown below.
+It contains the <code class="docutils literal notranslate"><span class="pre">INIT</span></code>, <code class="docutils literal notranslate"><span class="pre">PRINT</span></code>, <code class="docutils literal notranslate"><span class="pre">EXIT</span></code> and <code class="docutils literal notranslate"><span class="pre">FIN</span></code> macros whose definition depend on the exact variant that is built.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">Main skeleton to generate <code class="docutils literal notranslate"><span class="pre">program</span></code> variants.</span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">main</span><span class="p">(</span><span class="n">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">INIT</span><span class="p">();</span>
+
+  <span class="k">for</span> <span class="p">(</span><span class="nb">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">switch</span><span class="p">(</span><span class="n">fork</span><span class="p">())</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">perror</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+      <span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">PRINT</span><span class="p">();</span>
+        <span class="n">EXIT</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="n">FIN</span><span class="p">();</span>
+  <span class="n">_exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Here are the tested variants for <code class="docutils literal notranslate"><span class="pre">INIT</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nop</span></code>: do nothing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nbf</span></code>: explicitly disable <code class="docutils literal notranslate"><span class="pre">stdout</span></code> buffering.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lbf</span></code>: explicitly set <code class="docutils literal notranslate"><span class="pre">stdout</span></code> as line buffered, using a buffer of size 1024 bytes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fbf</span></code>: explicitly set <code class="docutils literal notranslate"><span class="pre">stdout</span></code> as fully buffered, using a buffer of size 1024 bytes.</p></li>
+</ul>
+<p>Here are the tested variants for <code class="docutils literal notranslate"><span class="pre">PRINT</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nop</span></code>: do nothing.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: call <code class="docutils literal notranslate"><span class="pre">printf</span></code> on <code class="docutils literal notranslate"><span class="pre">i</span></code> (without newline).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pf</span></code>: call <code class="docutils literal notranslate"><span class="pre">printf</span></code> on <code class="docutils literal notranslate"><span class="pre">i</span></code> (without newline) then call <code class="docutils literal notranslate"><span class="pre">fflush</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pn</span></code>: call <code class="docutils literal notranslate"><span class="pre">printf</span></code> on <code class="docutils literal notranslate"><span class="pre">i\n</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pnf</span></code>: call <code class="docutils literal notranslate"><span class="pre">printf</span></code> on <code class="docutils literal notranslate"><span class="pre">i\n</span></code> then call <code class="docutils literal notranslate"><span class="pre">fflush</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w</span></code>: call the <code class="docutils literal notranslate"><span class="pre">write</span></code> libc function on <code class="docutils literal notranslate"><span class="pre">i</span></code> (without newline).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wn</span></code>: call the <code class="docutils literal notranslate"><span class="pre">write</span></code> libc function on <code class="docutils literal notranslate"><span class="pre">i\n</span></code>.</p></li>
+</ul>
+<p>Here are the tested variants for <code class="docutils literal notranslate"><span class="pre">EXIT</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">exit</span></code>: call <code class="docutils literal notranslate"><span class="pre">exit(0)</span></code> (<em>clean</em> termination).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_exit</span></code>: call <code class="docutils literal notranslate"><span class="pre">_exit(0)</span></code> (<em>rough</em> termination: should not flush <code class="docutils literal notranslate"><span class="pre">stdio</span></code> streams).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">segv</span></code>: issues a segmentation fault (what student code will do in practice 😝).</p></li>
+</ul>
+<p>And finally here are the variants for <code class="docutils literal notranslate"><span class="pre">FIN</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">wait</span></code>: call the <code class="docutils literal notranslate"><span class="pre">wait</span></code> libc function until all sub processes have terminated.
+Not waiting for the termination of subprocesses is not tested here because it makes the automation of the execution too painful.</p></li>
+</ul>
+<p>You can use the following files if you want to build and run some of these variants yourself.</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../../_downloads/8adc531365aac03af6aef79ad1af6d1a/base.c"><code class="xref download docutils literal notranslate"><span class="pre">base.c</span></code></a> is the full skeleton code</p></li>
+<li><p><a class="reference download internal" download="" href="../../_downloads/da1cedfc2e89df17a2385ef9b335def6/build.ninja"><code class="xref download docutils literal notranslate"><span class="pre">build.ninja</span></code></a> defines how to build the variants</p></li>
+<li><p><a class="reference download internal" download="" href="../../_downloads/3ccafc571fe6bb6f40c297987eb7b05f/generate.py"><code class="xref download docutils literal notranslate"><span class="pre">generate.py</span></code></a> generates the ninja file</p></li>
+</ul>
+<p>I furthermore propose to execute the processes in several contexts to see how this changes their behavior.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">term</span></code>: call <code class="docutils literal notranslate"><span class="pre">./variant</span></code> with standard output set to a terminal.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">termerr</span></code>: call <code class="docutils literal notranslate"><span class="pre">./variant</span> <span class="pre">1&gt;&amp;2</span></code> with standard output and error set to a terminal.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">file</span></code>: call <code class="docutils literal notranslate"><span class="pre">./variant</span> <span class="pre">&gt;</span> <span class="pre">some_file</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pipe</span></code>: call <code class="docutils literal notranslate"><span class="pre">./variant</span> <span class="pre">|</span> <span class="pre">wc</span> <span class="pre">--bytes</span></code>.</p></li>
+</ul>
+<p>I have executed each variant combination 100 times on a machine of <a class="reference external" href="https://www.grid5000.fr/">Grid’5000</a>’s cluster <a class="reference external" href="https://www.grid5000.fr/w/Grenoble:Hardware#dahu">Dahu</a>.
+For each execution context, I used <a class="reference external" href="https://en.wikipedia.org/wiki/Tmux">tmux</a> to log what has been printed on my terminal to a file (by calling tmux commands <code class="docutils literal notranslate"><span class="pre">capture-pane</span> <span class="pre">-S</span> <span class="pre">-</span></code> then <code class="docutils literal notranslate"><span class="pre">save-buffer</span> <span class="pre">&lt;FILENAME&gt;</span></code>).</p>
+</section>
+<section id="experiment-results">
+<h2>Experiment results<a class="headerlink" href="#experiment-results" title="Permalink to this headline">¶</a></h2>
+<p>The raw traces and usable data files resulting from the execution of all the variants are available on <a class="reference external" href="https://gist.github.com/mpoquet/197ba306f7207b171d90cddf2b94fa0a">this experiment’s gist</a>.
+A first result of this experiment is that the buffering behavior of <code class="docutils literal notranslate"><span class="pre">glibc</span></code> 2.34 seems deterministic.
+For all 336 combinations, there was no variance in the number of messages printed.
+In other words, all 100 executions of each variant either printed 10 messages or 0.
+To go deeper down the rabbit hole, here is the overall distribution of the messages printed depending on the values of <code class="docutils literal notranslate"><span class="pre">PRINT</span></code> and execution context.</p>
+<figure class="align-default" id="id12">
+<img alt="../../_images/message-printed-overall-distribution.png" src="../../_images/message-printed-overall-distribution.png" />
+<figcaption>
+<p><span class="caption-text">Distribution of the number of messages printed for each variant, depending on how the messages are printed (columns) and on the execution context (rows).</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>We can already conclude for some <code class="docutils literal notranslate"><span class="pre">PRINT</span></code> strategies.</p>
+<ul class="simple">
+<li><p>Not calling any printing function (<code class="docutils literal notranslate"><span class="pre">nop</span></code> column) never prints any message. Yay! 😅</p></li>
+<li><p>Calling the libc <code class="docutils literal notranslate"><span class="pre">write</span></code> function never loses messages, regardless if the buffer is terminated by a newline (<code class="docutils literal notranslate"><span class="pre">wn</span></code> column) or not (<code class="docutils literal notranslate"><span class="pre">w</span></code> column). 🥳💪</p></li>
+<li><p>Calling <code class="docutils literal notranslate"><span class="pre">fflush(stdout);</span></code> after a <code class="docutils literal notranslate"><span class="pre">printf</span></code> function never loses messages, regardless if the buffer is terminated by a newline (<code class="docutils literal notranslate"><span class="pre">pnf</span></code> column) or not (<code class="docutils literal notranslate"><span class="pre">pf</span></code> column). 🥳💪</p></li>
+<li><p>Just calling <code class="docutils literal notranslate"><span class="pre">printf</span></code> with a buffer not terminated by a newline (<code class="docutils literal notranslate"><span class="pre">p</span></code> column) leads to message loss in some cases.</p></li>
+<li><p>Contrary to popular belief, just calling <code class="docutils literal notranslate"><span class="pre">printf</span></code> with a buffer terminated by a newline (<code class="docutils literal notranslate"><span class="pre">pn</span></code> column) also leads to message loss in some cases. 😱</p></li>
+</ul>
+<p>Let us investigate what happens for the non-trivial variants! First, let us zoom on what happens when just calling <code class="docutils literal notranslate"><span class="pre">printf</span></code> without newline (<code class="docutils literal notranslate"><span class="pre">p</span></code> <code class="docutils literal notranslate"><span class="pre">PRINT</span></code> variant).</p>
+<figure class="align-default" id="id13">
+<img alt="../../_images/message-printed-p-distribution.png" src="../../_images/message-printed-p-distribution.png" />
+<figcaption>
+<p><span class="caption-text">Distribution of the number of messages printed for the print variant where <code class="docutils literal notranslate"><span class="pre">printf</span></code> is just called <strong>without a newline</strong> in its buffer. Various combinations exist depending on other parameters and are displayed depending on how the process has set its buffering policy (rows) and how it has terminated (columns).</span><a class="headerlink" href="#id13" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>This figure is enough to conclude about just calling <code class="docutils literal notranslate"><span class="pre">printf</span></code> without newline at the end of the buffer!</p>
+<ul class="simple">
+<li><p>If the process terminates by calling the libc <code class="docutils literal notranslate"><span class="pre">exit</span></code> function, it never loses messages. This is consistent with <code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">exit</span></code>, which states that the function should flush all buffers.</p></li>
+<li><p>If the process disables buffering on its standard output (<em>i.e.</em>, sets <code class="docutils literal notranslate"><span class="pre">stdout</span></code> to the unbuffered buffering mode), it never loses messages. This is consistent with <code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">setvbuf</span></code> that states that “When an output stream is unbuffered, information appears on the destination file or terminal as soon as written”.</p></li>
+<li><p>In all other cases, the messages are always lost. This is consistent with <code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">setvbuf</span></code> as the message does not contain a newline for the line buffered policy, and as the message is too small to reach the block size for the block buffered policy.</p></li>
+</ul>
+<p>Let us now finally investigate the last print case: Just calling <code class="docutils literal notranslate"><span class="pre">printf</span></code> with a buffer terminated by a newline.</p>
+<figure class="align-default" id="id14">
+<img alt="../../_images/message-printed-pn-distribution.png" src="../../_images/message-printed-pn-distribution.png" />
+<figcaption>
+<p><span class="caption-text">Distribution of the number of messages printed for the print variant where <code class="docutils literal notranslate"><span class="pre">printf</span></code> is just called <strong>with a newline</strong> in its buffer. Various combinations exist depending on other parameters and are displayed depending on how the process has set its buffering policy (rows) and how it has terminated (columns).</span><a class="headerlink" href="#id14" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Let us first focus on the cases where the buffering policy is fully defined — all rows but the last one <code class="docutils literal notranslate"><span class="pre">nop</span></code>.</p>
+<ul class="simple">
+<li><p>As expected, if the process terminates by calling the libc <code class="docutils literal notranslate"><span class="pre">exit</span></code> function, it never loses messages.</p></li>
+<li><p>Messages are never lost if the buffering policy is set to unbuffered (disabled) or line buffered.
+This is consistent with <code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">setvbuf</span></code> that states “when it is line buffered, characters are saved up until a newline is output or input is read from any stream attached to a terminal device (typically stdin)”.</p></li>
+<li><p>As expected, if the file is fully buffered, all messages are lost unless the <code class="docutils literal notranslate"><span class="pre">exit</span></code> libc function has been called.
+This is because the buffer we wrote is too small to reach the block size we have set.</p></li>
+</ul>
+<p>Finally, we can see that if we do not explicitly set the buffering policy of <code class="docutils literal notranslate"><span class="pre">stdout</span></code> in our program, messages may be lost or not.
+This is because the tested execution contexts here do not have the same default buffering mode, as shown on the next figure.
+Files and pipes are block buffered by default, while the terminal is line buffered by default.</p>
+<figure class="align-default" id="id15">
+<img alt="../../_images/message-printed-pn-nop-distribution.png" src="../../_images/message-printed-pn-nop-distribution.png" />
+<figcaption>
+<p><span class="caption-text">Distribution of the number of messages printed for the print variant where <code class="docutils literal notranslate"><span class="pre">printf</span></code> is just called <strong>with a newline</strong> in its buffer, and when the default buffering policy is used. Data is shown depending on the context the process has been executed in (rows) and how it has terminated (columns).</span><a class="headerlink" href="#id15" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="take-home-tips-to-prevent-printf-message-loss">
+<h2>Take home tips to prevent <code class="docutils literal notranslate"><span class="pre">printf</span></code> message loss<a class="headerlink" href="#take-home-tips-to-prevent-printf-message-loss" title="Permalink to this headline">¶</a></h2>
+<p>We have seen that simply calling <code class="docutils literal notranslate"><span class="pre">printf</span></code> in a multiprocess program can easily lead to the loss of messages, which can be very painful if one wants to use such messages to debug one’s program. When all processes terminate cleanly by calling the <code class="docutils literal notranslate"><span class="pre">exit</span></code> function or similar (<em>e.g.</em>, by returning from the <code class="docutils literal notranslate"><span class="pre">main</span></code> function), no messages are lost. In other cases, typically when at least one process crashes or deadlocks, messages can be lost unless:</p>
+<ul class="simple">
+<li><p>You ensured that all <code class="docutils literal notranslate"><span class="pre">printf</span></code> calls were followed by a call to <code class="docutils literal notranslate"><span class="pre">fflush(stdout);</span></code>.</p></li>
+<li><p>You ensured that buffering on <code class="docutils literal notranslate"><span class="pre">stdout</span></code> has been disabled. If you can change the source code of the program you execute, you can disable buffering manually by calling <code class="docutils literal notranslate"><span class="pre">setvbuf(stdout,</span> <span class="pre">NULL,</span> <span class="pre">_IONBF,</span> <span class="pre">0);</span></code> at the beginning of your program. If you cannot or do not want to change the program source code, you can use tricks to force the program to execute a similar code at initialization time. For example, the <a class="reference external" href="https://linux.die.net/man/1/stdbuf">stdbuf</a> executable from GNU coreutils has been created exactly for this purpose. It works by forcing your program to load a dedicated library (<code class="docutils literal notranslate"><span class="pre">libstdbuf.so</span></code>) at initialization time by setting <code class="docutils literal notranslate"><span class="pre">LD_PRELOAD</span></code> before issuing an <code class="docutils literal notranslate"><span class="pre">exec</span></code> syscall (cf. <a class="reference external" href="https://github.com/coreutils/coreutils/blob/cfe4af661f9572ad4dbe5b3e01a178e04ff343ae/src/stdbuf.c#L387">stdbuf source code</a>). The <code class="docutils literal notranslate"><span class="pre">libstdbuf.so</span></code> library has a <em>constructor</em>, that is to say a code that is executed when the library is loaded (cf. <a class="reference external" href="https://github.com/coreutils/coreutils/blob/cfe4af661f9572ad4dbe5b3e01a178e04ff343ae/src/libstdbuf.c#L138">libstdbuf source code</a>). This code essentially calls <code class="docutils literal notranslate"><span class="pre">setvbuf</span></code> according to the command-line arguments given to <code class="docutils literal notranslate"><span class="pre">stdbuf</span></code>. Details on how <code class="docutils literal notranslate"><span class="pre">LD_PRELOAD</span></code> works are given in <a class="reference external" href="https://man7.org/linux/man-pages/man8/ld.so.8.html">man ld.so</a>.</p></li>
+</ul>
+<p>If you have additional properties on the messages sent to <code class="docutils literal notranslate"><span class="pre">printf</span></code> (<em>e.g.</em>, that they are finished by a newline or that they are big enough), other <code class="docutils literal notranslate"><span class="pre">stdio</span></code> buffering policies may prevent message loss — but doing such a strong assumption on students’ code is not reasonable IMHO.</p>
+<p>Finally, another solution could be to force the use of <code class="docutils literal notranslate"><span class="pre">stderr</span></code> rather than <code class="docutils literal notranslate"><span class="pre">stdout</span></code>, as <code class="docutils literal notranslate"><span class="pre">stderr</span></code> is unbuffered by default.
+However this change is not trivial to do: As seen on the experiment done in this post, redirecting the file descriptors of the process before calling it does not help in any way. We could rewrite <code class="docutils literal notranslate"><span class="pre">printf</span></code> calls to <code class="docutils literal notranslate"><span class="pre">fprintf</span></code> on <code class="docutils literal notranslate"><span class="pre">stderr</span></code> with a macro such as <code class="docutils literal notranslate"><span class="pre">#define</span> <span class="pre">printf(args...)</span> <span class="pre">fprintf(stderr,</span> <span class="pre">##args)</span></code>, but I think that simply adding an <code class="docutils literal notranslate"><span class="pre">setvbuf(stdout,</span> <span class="pre">NULL,</span> <span class="pre">_IONBF,</span> <span class="pre">0);</span></code> instruction at the beginning of the <code class="docutils literal notranslate"><span class="pre">main</span></code> function of a student code that has inconsistent prints would be more convenient and much more reliable.</p>
+</section>
+<section id="acknowledgements-faq-and-misc-stuff">
+<h2>Acknowledgements, FAQ and misc. stuff<a class="headerlink" href="#acknowledgements-faq-and-misc-stuff" title="Permalink to this headline">¶</a></h2>
+<p>Thanks to Raphaël Bleuse, Arnaud Giersch, Michael Mercier, Clément Mommessin, Lucas Nussbaum and Samuel Thibault for their feedback on this post, which has improved its quality.</p>
+<p><strong>Question</strong>. What is <code class="docutils literal notranslate"><span class="pre">program</span></code>’s source code? <a class="reference download internal" download="" href="../../_downloads/8fb989a93e836ae08d48e7d504624396/real-program.c"><code class="xref download docutils literal notranslate"><span class="pre">real-program.c</span></code></a></p>
+<p><strong>Warning</strong>. By default, <a class="reference external" href="https://en.wikipedia.org/wiki/Z_shell">zsh</a> clears the current line before printing the prompt. This can lead to the loss of messages when the initial process does not wait for its children. This behavior can be disabled by calling <code class="docutils literal notranslate"><span class="pre">setopt</span> <span class="pre">nopromptcr</span></code> in your zsh setup.</p>
+</section>
+</section>
+
+
+          </div>
+          
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Millian Poquet.
+      License <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+      Made with <a href="http://www.sphinx-doc.org/en/master/" rel="nofollow">Sphinx</a>
+      (custom <a href="https://github.com/bitprophet/alabaster" rel="nofollow">Alabaster</a> theme).
+      <a href="../../_sources/blog/2022-12-printf-message-loss/index.rst.txt"
+          rel="nofollow">Page source</a>.
+      <a href="https://github.com/mpoquet/mpoquet.github.io/tree/sphinx" rel="nofollow">Git<a/>.
+    </div>
+  </body>
+</html>

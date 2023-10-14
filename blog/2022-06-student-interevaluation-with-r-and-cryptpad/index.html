@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Student inter-evaluation with R and cryptpad &#8212; Millian Poquet</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Isolated dynamic library loading with dlmopen" href="../2021-09-isolated-dynamic-library-loading-with-dlmopen/index.html" />
+    <link rel="prev" title="printf and parallel code debugging" href="../2022-12-printf-message-loss/index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+              <div class="related top">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../teaching.html">Teaching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html">Jobs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../blog.html">Blog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../miam.html">Miam</a></li>
+</ul>
+
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="student-inter-evaluation-with-r-and-cryptpad">
+<h1>Student inter-evaluation with R and cryptpad<a class="headerlink" href="#student-inter-evaluation-with-r-and-cryptpad" title="Permalink to this headline">¶</a></h1>
+<p>I just gave a software vulnerability course where I made the students work in groups on a <a class="reference external" href="https://en.wikipedia.org/wiki/Common_Vulnerabilities_and_Exposures">CVE</a> (understand how it works, how to exploit it, how to reproduce the exploit, how it has been fixed, how to know if a system is exposed, how to fix an exposed system…).
+The students presented their work to the other groups and I wanted to experiment on the evaluation of the presentation.
+Instead of just giving a grade based on my opinion,
+I wanted to gather the opinion of all the students in the audience and to somehow agregate their opinions into a grade.</p>
+<p>While the questionnaire I did to gather the students’ opinion was a bit naive and not very interesting, the tools I used to do this can be interesting if one wants to try something similar so I share it here.</p>
+<section id="tools-used">
+<h2>Tools used<a class="headerlink" href="#tools-used" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>I used <a class="reference external" href="https://cryptpad.fr/">CryptPad</a> to create questionnaires that students can fill to evaluate the work of other students.
+CryptPad is an open-source (AGPL-3.0) web-based office suite.
+In particular, CryptPad’s Form tool enables to create questionnaires that can be completed by people, and you can very easily obtain exploitable <a class="reference external" href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV</a> data once it has been completed.</p></li>
+<li><p>I used <a class="reference external" href="https://en.wikipedia.org/wiki/R_(programming_language)">R</a> + <a class="reference external" href="https://www.tidyverse.org/">tidyverse</a> to manipulate data, to grade students and to visualize results.</p></li>
+</ul>
+</section>
+<section id="base-questionnaire">
+<h2>Base questionnaire<a class="headerlink" href="#base-questionnaire" title="Permalink to this headline">¶</a></h2>
+<p>First, I created a <strong>base</strong> questionnaire used to evaluate a presentation.</p>
+<ul class="simple">
+<li><p>I wanted students to self-evaluate their understanding of a vulnerability just after it has been presented.</p></li>
+<li><p>I wanted students to evaluate the quality of the presentation itself.</p></li>
+<li><p>I used ordinal scales with special values to detect whether something important was missing in a group’s presentation.</p></li>
+</ul>
+<p>I used CryptPad’s <code class="docutils literal notranslate"><span class="pre">Choice</span> <span class="pre">Grid</span></code> to make this convenient.
+Here are screenshots of the interface that enables to create polls.</p>
+<figure class="align-default" id="id1">
+<img alt="Self-evaluation of what a student understood" src="../../_images/self-understanding.png" />
+<figcaption>
+<p><span class="caption-text">Question to let students self-evaluate their understanding of the vulnerability.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id2">
+<img alt="Inter-evaluation of the presentation quality" src="../../_images/peer-quality.png" />
+<figcaption>
+<p><span class="caption-text">Question to let students inter-evaluate the quality of the presentation.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>And here is the interface used to fill the questionnaire.</p>
+<figure class="align-default" id="id3">
+<img alt="Interface to fill the base questionnaire" src="../../_images/form-fill-interface.png" />
+<figcaption>
+<p><span class="caption-text">Interface to fill the questionnaire (used by students (and teacher))</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>I then created a copy of the base file for each group.
+This can be done from CryptPad’s Drive interface (Drag and drop or Right Click + Make a copy).</p>
+</section>
+<section id="identification-questionnaire">
+<h2>Identification questionnaire<a class="headerlink" href="#identification-questionnaire" title="Permalink to this headline">¶</a></h2>
+<p>Data gathered from CryptPad are identified by CryptPad user name.
+I created a questionnaire to associate this user name with the student identifier that I used for other tests (their GitLab account on the university’s GitLab instance).</p>
+<figure class="align-default">
+<img alt="Interface to fill the identification questionnaire" src="../../_images/identification-interface.png" />
+</figure>
+</section>
+<section id="workflow">
+<h2>Workflow<a class="headerlink" href="#workflow" title="Permalink to this headline">¶</a></h2>
+<p>Presentations were done in sequence during the same course time slot.
+I made the students fill the identification questionnaire at the beginning of the time slot (before the presentations).
+I saved the gathered data on my disk by clicking on the <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">to</span> <span class="pre">csv</span></code> button on the Poll’s <code class="docutils literal notranslate"><span class="pre">Responses</span></code> tab.</p>
+<p>I then asked the audience of each presentation to pre-fill the questionnaire during the presentation, and to complete it just after the end of the presentation (I gave them a bunch of minutes).
+I saved the gathered data of each presentation once all the students have filled the questionnaire.</p>
+</section>
+<section id="list-of-involved-data-files">
+<h2>List of involved data files<a class="headerlink" href="#list-of-involved-data-files" title="Permalink to this headline">¶</a></h2>
+<p>Here are the various data files involved in this analysis.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e3a96de6c2ede4cf9bf5bd9745c9a024/identification.csv"><code class="xref download docutils literal notranslate"><span class="pre">identification.csv</span></code></a>, obtained from the <a class="reference internal" href="#identification-questionnaire">Identification questionnaire</a>.</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-csv notranslate"><div class="highlight"><pre><span></span><span class="o">Time</span><span class="p">,</span><span class="m">Participant</span><span class="p">,</span><span class="k">What is your gitlab account?</span>
+<span class="o">2022-06-23T08:51:26.234Z</span><span class="p">,</span><span class="m">mpoquet</span><span class="p">,</span><span class="k">mpoquet</span>
+<span class="o">2022-06-23T09:01:00.000Z</span><span class="p">,</span><span class="m">superman</span><span class="p">,</span><span class="k">johndoe</span>
+<span class="o">2022-06-23T09:02:00.000Z</span><span class="p">,</span><span class="m">ohko</span><span class="p">,</span><span class="k">janedoe</span>
+<span class="o">2022-06-23T09:03:00.000Z</span><span class="p">,</span><span class="m">fred</span><span class="p">,</span><span class="k">fmolas</span>
+<span class="o">2022-06-23T09:03:00.000Z</span><span class="p">,</span><span class="m">seb</span><span class="p">,</span><span class="k">srassiat</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">An evaluation file for each group, here <a class="reference download internal" download="" href="../../_downloads/866f169be1663725b31edd3e6c2b6622/cve-pwnkit.csv"><code class="xref download docutils literal notranslate"><span class="pre">cve-pwnkit.csv</span></code></a> for the group that presented <a class="reference external" href="https://blog.qualys.com/vulnerabilities-threat-research/2022/01/25/pwnkit-local-privilege-escalation-vulnerability-discovered-in-polkits-pkexec-cve-2021-4034">PwnKit</a>. Obtained from each questionnaire duplicated from the <a class="reference internal" href="#base-questionnaire">Base questionnaire</a>.</span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-csv notranslate"><div class="highlight"><pre><span></span><span class="o">Time</span><span class="p">,</span><span class="m">Participant</span><span class="p">,</span><span class="k">Your understanding of the vulnerability that has just been presented | General principles of the vulnerability</span><span class="p">,</span><span class="no">Your understanding of the vulnerability that has just been presented | What systems are exposed?</span><span class="p">,</span><span class="s1">Your understanding of the vulnerability that has just been presented | How to exploit it?</span><span class="p">,Your understanding of the vulnerability that has just been presented | How to detect if my system is exposed?,Your understanding of the vulnerability that has just been presented | How can I protect my system from it?,Your understanding of the vulnerability that has just been presented | How has it been fixed?,Your opinion on the presentation quality | General opinion,Your opinion on the presentation quality | Presentation slides,Your opinion on the presentation quality | Oral communication,Your opinion on the presentation quality | Answers to the questions</span>
+<span class="o">2022-06-23T09:15:00.000Z</span><span class="p">,</span><span class="m">mpoquet</span><span class="p">,</span><span class="k">Very strong</span><span class="p">,</span><span class="no">Very strong</span><span class="p">,</span><span class="s1">Very strong</span><span class="p">,Very strong,Very strong,Very strong,Good,Very good,Very good,Good</span>
+<span class="o">2022-06-23T09:15:10.000Z</span><span class="p">,</span><span class="m">superman</span><span class="p">,</span><span class="k">Very strong</span><span class="p">,</span><span class="no">Very strong</span><span class="p">,</span><span class="s1">Very strong</span><span class="p">,Very strong,Very strong,Very strong,Very good,Very good,Very good,Very good</span>
+<span class="o">2022-06-23T09:15:10.000Z</span><span class="p">,</span><span class="m">ohko</span><span class="p">,</span><span class="k">Very poor</span><span class="p">,</span><span class="no">Very poor</span><span class="p">,</span><span class="s1">Very poor</span><span class="p">,Very poor,Very poor,Very poor,Very bad,Very bad,Very bad,Very bad</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e20b07cafbb562469255c2dae2c8ace5/group-members.csv"><code class="xref download docutils literal notranslate"><span class="pre">group-members.csv</span></code></a> associates students to groups (+teacher for convenience’s sake). Manually written.</span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="highlight-csv notranslate"><div class="highlight"><pre><span></span><span class="o">group</span><span class="p">,</span><span class="m">gitlab_account</span>
+<span class="o">teacher</span><span class="p">,</span><span class="m">mpoquet</span>
+<span class="o">pwnkit</span><span class="p">,</span><span class="m">fmolas</span>
+<span class="o">pwnkit</span><span class="p">,</span><span class="m">srassiat</span>
+<span class="o">log4shell</span><span class="p">,</span><span class="m">johndoe</span>
+<span class="o">log4shell</span><span class="p">,</span><span class="m">janedoe</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="analysis-with-r">
+<h2>Analysis with R<a class="headerlink" href="#analysis-with-r" title="Permalink to this headline">¶</a></h2>
+<p>Here is the code I used to analyze the data from all the presentations.</p>
+<p>The script starts by importing <a class="reference external" href="https://www.tidyverse.org/">tidyverse</a>, then creates types to represent the ordinal scales.</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#!/usr/bin/env Rscript</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+
+<span class="n">understanding_vec</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#39;Not mentioned&#39;</span><span class="p">,</span> <span class="s">&#39;Very poor&#39;</span><span class="p">,</span> <span class="s">&#39;Poor&#39;</span><span class="p">,</span> <span class="s">&#39;Strong&#39;</span><span class="p">,</span> <span class="s">&#39;Very strong&#39;</span><span class="p">)</span>
+<span class="n">quality_vec</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#39;Very bad&#39;</span><span class="p">,</span> <span class="s">&#39;Bad&#39;</span><span class="p">,</span> <span class="s">&#39;Good&#39;</span><span class="p">,</span> <span class="s">&#39;Very good&#39;</span><span class="p">)</span>
+
+<span class="n">col_understanding</span> <span class="o">=</span> <span class="nf">col_factor</span><span class="p">(</span><span class="n">levels</span><span class="o">=</span><span class="n">understanding_vec</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">col_quality</span> <span class="o">=</span> <span class="nf">col_factor</span><span class="p">(</span><span class="n">levels</span><span class="o">=</span><span class="n">quality_vec</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Evaluation files for each groups are read separately, then put in a single dataframe.
+I used <a class="reference external" href="https://readr.tidyverse.org/reference/spec.html">readr::spec</a> to generate a basic <code class="docutils literal notranslate"><span class="pre">cols</span></code> specification.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">eval_cols</span> <span class="o">=</span> <span class="nf">cols</span><span class="p">(</span>
+  <span class="n">`Time`</span> <span class="o">=</span> <span class="nf">col_datetime</span><span class="p">(</span><span class="n">format</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">),</span>
+  <span class="n">`Participant`</span> <span class="o">=</span> <span class="nf">col_character</span><span class="p">(),</span>
+  <span class="n">`Your understanding of the vulnerability that has just been presented | General principles of the vulnerability`</span> <span class="o">=</span> <span class="n">col_understanding</span><span class="p">,</span>
+  <span class="n">`Your understanding of the vulnerability that has just been presented | What systems are exposed?`</span> <span class="o">=</span> <span class="n">col_understanding</span><span class="p">,</span>
+  <span class="n">`Your understanding of the vulnerability that has just been presented | How to exploit it?`</span> <span class="o">=</span> <span class="n">col_understanding</span><span class="p">,</span>
+  <span class="n">`Your understanding of the vulnerability that has just been presented | How to detect if my system is exposed?`</span> <span class="o">=</span> <span class="n">col_understanding</span><span class="p">,</span>
+  <span class="n">`Your understanding of the vulnerability that has just been presented | How can I protect my system from it?`</span> <span class="o">=</span> <span class="n">col_understanding</span><span class="p">,</span>
+  <span class="n">`Your understanding of the vulnerability that has just been presented | How has it been fixed?`</span> <span class="o">=</span> <span class="n">col_understanding</span><span class="p">,</span>
+  <span class="n">`Your opinion on the presentation quality | General opinion`</span> <span class="o">=</span> <span class="n">col_quality</span><span class="p">,</span>
+  <span class="n">`Your opinion on the presentation quality | Presentation slides`</span> <span class="o">=</span> <span class="n">col_quality</span><span class="p">,</span>
+  <span class="n">`Your opinion on the presentation quality | Oral communication`</span> <span class="o">=</span> <span class="n">col_quality</span><span class="p">,</span>
+  <span class="n">`Your opinion on the presentation quality | Answers to the questions`</span> <span class="o">=</span> <span class="n">col_quality</span>
+<span class="p">)</span>
+
+<span class="n">presentation1</span> <span class="o">=</span> <span class="nf">read_csv</span><span class="p">(</span><span class="s">&#39;cve-pwnkit.csv&#39;</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">col_types</span><span class="o">=</span><span class="n">eval_cols</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s">&quot;pwnkit&quot;</span><span class="p">)</span>
+<span class="n">presentation2</span> <span class="o">=</span> <span class="nf">read_csv</span><span class="p">(</span><span class="s">&#39;cve-log4shell.csv&#39;</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">col_types</span><span class="o">=</span><span class="n">eval_cols</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="s">&quot;log4shell&quot;</span><span class="p">)</span>
+<span class="c1"># ...</span>
+<span class="n">presentations</span> <span class="o">=</span> <span class="nf">bind_rows</span><span class="p">(</span>
+  <span class="n">presentation1</span>
+ <span class="p">,</span><span class="n">presentation2</span>
+<span class="c1">#,...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Columns names are very long in the evaluation CSV files so I shortened them.</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id9" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Shorten the column names</span>
+<span class="n">presentations</span> <span class="o">=</span> <span class="n">presentations</span> <span class="o">%&gt;%</span> <span class="nf">rename</span><span class="p">(</span>
+  <span class="n">`General principles of the vulnerability`</span> <span class="o">=</span> <span class="n">`Your understanding of the vulnerability that has just been presented | General principles of the vulnerability`</span><span class="p">,</span>
+  <span class="n">`What systems are exposed?`</span> <span class="o">=</span> <span class="n">`Your understanding of the vulnerability that has just been presented | What systems are exposed?`</span><span class="p">,</span>
+  <span class="n">`How to exploit it?`</span> <span class="o">=</span> <span class="n">`Your understanding of the vulnerability that has just been presented | How to exploit it?`</span><span class="p">,</span>
+  <span class="n">`How to detect if my system is exposed?`</span> <span class="o">=</span> <span class="n">`Your understanding of the vulnerability that has just been presented | How to detect if my system is exposed?`</span><span class="p">,</span>
+  <span class="n">`How can I protect my system from it?`</span> <span class="o">=</span> <span class="n">`Your understanding of the vulnerability that has just been presented | How can I protect my system from it?`</span><span class="p">,</span>
+  <span class="n">`How has it been fixed?`</span> <span class="o">=</span> <span class="n">`Your understanding of the vulnerability that has just been presented | How has it been fixed?`</span><span class="p">,</span>
+  <span class="n">`General opinion`</span> <span class="o">=</span> <span class="n">`Your opinion on the presentation quality | General opinion`</span><span class="p">,</span>
+  <span class="n">`Presentation slides`</span> <span class="o">=</span> <span class="n">`Your opinion on the presentation quality | Presentation slides`</span><span class="p">,</span>
+  <span class="n">`Oral communication`</span> <span class="o">=</span> <span class="n">`Your opinion on the presentation quality | Oral communication`</span><span class="p">,</span>
+  <span class="n">`Answers to the questions`</span> <span class="o">=</span> <span class="n">`Your opinion on the presentation quality | Answers to the questions`</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Participants in the evaluation are then identified, which enables to filter wrong data.
+In my real data, some students evaluated their own group and I wanted to exclude this from my analysis.</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Identify questionnaire participants to students/teacher</span>
+<span class="n">identification</span> <span class="o">=</span> <span class="nf">read_csv</span><span class="p">(</span><span class="s">&#39;identification.csv&#39;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">rename</span><span class="p">(</span><span class="n">gitlab_account</span> <span class="o">=</span> <span class="n">`What is your gitlab account?`</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="n">Time</span><span class="p">)</span>
+<span class="n">group_members</span> <span class="o">=</span> <span class="nf">read_csv</span><span class="p">(</span><span class="s">&#39;group-members.csv&#39;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">rename</span><span class="p">(</span><span class="n">participant_group</span> <span class="o">=</span> <span class="n">group</span><span class="p">)</span>
+
+<span class="n">identified_presentations</span> <span class="o">=</span> <span class="nf">left_join</span><span class="p">(</span>
+  <span class="n">presentations</span><span class="p">,</span>
+  <span class="nf">inner_join</span><span class="p">(</span>
+    <span class="n">identification</span><span class="p">,</span>
+    <span class="n">group_members</span><span class="p">,</span>
+    <span class="n">by</span><span class="o">=</span><span class="s">&quot;gitlab_account&quot;</span>
+  <span class="p">),</span>
+  <span class="n">by</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Participant&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Some students evaluated their own group and I did not want to use such data.</span>
+<span class="n">presentations_no_selfgroup_eval</span> <span class="o">=</span> <span class="n">identified_presentations</span> <span class="o">%&gt;%</span> <span class="nf">filter</span><span class="p">(</span><span class="n">group</span> <span class="o">!=</span> <span class="n">participant_group</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>In my real evaluation, all groups did not have the same size.
+I planned to use the median opinion to grade students, so I computed how many participants were involved in the evaluation of each group to visualize the median opinion line.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute how many participants evaluated each group</span>
+<span class="n">participants_per_group</span> <span class="o">=</span> <span class="n">presentations_no_selfgroup_eval</span> <span class="o">%&gt;%</span>
+  <span class="nf">group_by</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">summarize</span><span class="p">(</span><span class="n">nb_participants</span> <span class="o">=</span> <span class="nf">n_distinct</span><span class="p">(</span><span class="n">Participant</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span>
+    <span class="n">nb_participants_median</span> <span class="o">=</span> <span class="n">nb_participants</span><span class="o">/</span><span class="m">2</span><span class="p">,</span>
+    <span class="n">linetype</span> <span class="o">=</span> <span class="s">&#39;Median Opinion&#39;</span><span class="p">,</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Here is a visualization script of the self-assessment of the participants understanding, for each group presentation.
+I used <a class="reference external" href="https://tidyr.tidyverse.org/reference/pivot_longer.html">tidyr::pivot_longer</a> to make the data in the format expected for stacked bar charts.</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data must be reshaped to fit what stacked bar charts expect</span>
+<span class="n">understanding_pivoted</span> <span class="o">=</span> <span class="n">presentations_no_selfgroup_eval</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span>
+  <span class="o">-</span><span class="n">`General opinion`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`Presentation slides`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`Oral communication`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`Answers to the questions`</span>
+  <span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="m">3</span><span class="o">:</span><span class="m">8</span><span class="p">,</span> <span class="n">names_to</span><span class="o">=</span><span class="s">&quot;Question&quot;</span><span class="p">,</span> <span class="n">values_to</span><span class="o">=</span><span class="s">&quot;Answer&quot;</span><span class="p">)</span>
+
+<span class="n">understanding_plot</span> <span class="o">=</span> <span class="n">understanding_pivoted</span> <span class="o">%&gt;%</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+    <span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">Question</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">Answer</span><span class="p">))</span> <span class="o">+</span>
+    <span class="nf">facet_wrap</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+    <span class="nf">geom_hline</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">participants_per_group</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">yintercept</span><span class="o">=</span><span class="n">nb_participants_median</span><span class="p">,</span> <span class="n">linetype</span><span class="o">=</span><span class="n">linetype</span><span class="p">))</span> <span class="o">+</span>
+    <span class="nf">coord_flip</span><span class="p">()</span> <span class="o">+</span>
+    <span class="nf">theme_bw</span><span class="p">()</span> <span class="o">+</span>
+    <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Number of partipants that have each opinion&quot;</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s">&quot;top&quot;</span><span class="p">,</span> <span class="n">legend.title</span><span class="o">=</span><span class="nf">element_blank</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p>Here is a very similar visualization script for the inter-evaluation of the quality of each group presentation.</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id13" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">quality_pivoted</span> <span class="o">=</span> <span class="n">presentations_no_selfgroup_eval</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span>
+  <span class="o">-</span><span class="n">`General principles of the vulnerability`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`What systems are exposed?`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`How to exploit it?`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`How to detect if my system is exposed?`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`How can I protect my system from it?`</span><span class="p">,</span>
+  <span class="o">-</span><span class="n">`How has it been fixed?`</span>
+  <span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="m">3</span><span class="o">:</span><span class="m">6</span><span class="p">,</span> <span class="n">names_to</span><span class="o">=</span><span class="s">&quot;Question&quot;</span><span class="p">,</span> <span class="n">values_to</span><span class="o">=</span><span class="s">&quot;Answer&quot;</span><span class="p">)</span>
+
+<span class="n">quality_plot</span> <span class="o">=</span> <span class="n">quality_pivoted</span> <span class="o">%&gt;%</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+    <span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">Question</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">Answer</span><span class="p">))</span> <span class="o">+</span>
+    <span class="nf">facet_wrap</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+    <span class="nf">geom_hline</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">participants_per_group</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">yintercept</span><span class="o">=</span><span class="n">nb_participants_median</span><span class="p">,</span> <span class="n">linetype</span><span class="o">=</span><span class="n">linetype</span><span class="p">))</span> <span class="o">+</span>
+    <span class="nf">coord_flip</span><span class="p">()</span> <span class="o">+</span>
+    <span class="nf">theme_bw</span><span class="p">()</span> <span class="o">+</span>
+    <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Number of partipants that have each opinion&quot;</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s">&quot;top&quot;</span><span class="p">,</span> <span class="n">legend.title</span><span class="o">=</span><span class="nf">element_blank</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p>On my real data, this is how the visualizations looked like (Text/values are in French).</p>
+<figure class="align-default" id="id14">
+<img alt="Visualization of the self-assessment understanting data" src="../../_images/understanding-overview.svg" /><figcaption>
+<p><span class="caption-text">Visualization of the self-assessment understanting data.</span><a class="headerlink" href="#id14" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id15">
+<img alt="Visualization of the inter-evaluation quality data" src="../../_images/quality-overview.svg" /><figcaption>
+<p><span class="caption-text">Visualization of the inter-evaluation quality data.</span><a class="headerlink" href="#id15" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>I originaly planned to use the median value to grade the students (thanks to <a class="reference external" href="https://search.r-project.org/CRAN/refmans/missMethods/html/median.factor.html">missMethods::median</a>), but the students greatly overestimated the quality of the presentation in my opinion so I used an average instead.
+To do so I used <a class="reference external" href="https://dplyr.tidyverse.org/reference/mutate.html">dplyr::mutate</a> with <a class="reference external" href="https://dplyr.tidyverse.org/reference/recode.html">dplyr::recode</a> to associate a numeric value to each ordinal value, then just used an average on the <em>General opinion</em> values to grade the whole presentation.</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/e5490f6753c7c10762d072c7dab325bc/analysis.R"><code class="xref download docutils literal notranslate"><span class="pre">analysis.R</span></code></a></span><a class="headerlink" href="#id16" title="Permalink to this code">¶</a></div>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Grade each group</span>
+<span class="n">group_grades</span> <span class="o">=</span> <span class="n">presentations_no_selfgroup_eval</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span>
+    <span class="n">grade</span> <span class="o">=</span> <span class="nf">recode</span><span class="p">(</span><span class="n">`General opinion`</span><span class="p">,</span>
+      <span class="s">&#39;Very bad&#39;</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span>
+      <span class="s">&#39;Bad&#39;</span> <span class="o">=</span> <span class="m">6</span><span class="p">,</span>
+      <span class="s">&#39;Good&#39;</span> <span class="o">=</span> <span class="m">14</span><span class="p">,</span>
+      <span class="s">&#39;Very good&#39;</span> <span class="o">=</span> <span class="m">20</span>
+    <span class="p">)</span>
+  <span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">group</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">summarize</span><span class="p">(</span>
+    <span class="n">project_presentation_grade</span> <span class="o">=</span> <span class="nf">round</span><span class="p">(</span><span class="nf">mean</span><span class="p">(</span><span class="n">grade</span><span class="p">),</span> <span class="n">digits</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>A much more complex grading function can of course be used, for example by:</p>
+<ul class="simple">
+<li><p>Using more data than the <em>General opinion</em> values.</p></li>
+<li><p>Using a weighted average by giving a weight to each Participant.
+For example giving a stronger weight to the teacher can make sense.
+The weight of the students can be the same for all students or depend on some value, for example on the grade of another test meant to evaluate their expertise level.</p></li>
+</ul>
+</section>
+<section id="last-words">
+<h2>Last words<a class="headerlink" href="#last-words" title="Permalink to this headline">¶</a></h2>
+<p>This experiment was interesting but next time I would like to design a more elaborate test to evaluate the overall work of each group rather than just their presentations.
+I think that properly evaluating how each student understood the topic of each presentation (here, CVEs) after all the presentations would be useful.
+It would enable to grade the work of each group depending on how they understood the specific topic they worked on, but also depending on how well this knowledge was shared with other groups (since usable data about how well each student understood each topic would be available).</p>
+</section>
+</section>
+
+
+          </div>
+          
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Millian Poquet.
+      License <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+      Made with <a href="http://www.sphinx-doc.org/en/master/" rel="nofollow">Sphinx</a>
+      (custom <a href="https://github.com/bitprophet/alabaster" rel="nofollow">Alabaster</a> theme).
+      <a href="../../_sources/blog/2022-06-student-interevaluation-with-r-and-cryptpad/index.rst.txt"
+          rel="nofollow">Page source</a>.
+      <a href="https://github.com/mpoquet/mpoquet.github.io/tree/sphinx" rel="nofollow">Git<a/>.
+    </div>
+  </body>
+</html>

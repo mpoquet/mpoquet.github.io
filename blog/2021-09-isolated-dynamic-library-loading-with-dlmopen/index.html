@@ -1,0 +1,440 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Isolated dynamic library loading with dlmopen &#8212; Millian Poquet</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Vectorial screenshots in your slides" href="../2021-05-terminal-in-slides/index.html" />
+    <link rel="prev" title="Student inter-evaluation with R and cryptpad" href="../2022-06-student-interevaluation-with-r-and-cryptpad/index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+              <div class="related top">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../research.html">Research</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../teaching.html">Teaching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jobs.html">Jobs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../blog.html">Blog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../miam.html">Miam</a></li>
+</ul>
+
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="isolated-dynamic-library-loading-with-dlmopen">
+<h1>Isolated dynamic library loading with <code class="docutils literal notranslate"><span class="pre">dlmopen</span></code><a class="headerlink" href="#isolated-dynamic-library-loading-with-dlmopen" title="Permalink to this headline">¶</a></h1>
+<p>I am working on the <a class="reference external" href="https://batsim.org">Batsim</a> simulator and want to add a feature in it.
+My goal is to enable scheduling algorithms to be implemented as <em>good old</em> shared libraries (<code class="docutils literal notranslate"><span class="pre">.so</span></code> ELF files) and to load them dynamically when the Batsim process starts (depending on command-line arguments).
+Currently, scheduling algorithms must be implemented as separate processes that communicate with Batsim with a network protocol.</p>
+<p>This led me to test whether loading several libraries in the same process was possible with the following constraints.</p>
+<ul class="simple">
+<li><p>Loaded libraries have a common C API, from which the main program (Batsim) will call them.
+The main program must be able to select a library instance and call functions from the common C API on it.</p></li>
+<li><p>Loaded libraries can have non-disjoint dynamic dependencies.
+For example, all loaded libraries can have a <code class="docutils literal notranslate"><span class="pre">(NEEDED)</span> <span class="pre">libsomedependency.so</span></code> in the dynamic section of their ELF files.</p></li>
+<li><p>Loaded libraries and the main program can have non-disjoint dynamic dependencies.</p></li>
+<li><p>All of loaded libraries, their dependencies,
+Batsim and its dependencies can have global variables.
+Global variables can be mutable.</p></li>
+<li><p>All global variables must be <em>privatized</em>
+so that each loaded library live in a separate <em>world</em> that have no side effect
+on other libraries nor with Batsim.</p></li>
+</ul>
+<p>While reading <code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">dlopen</span></code> to search whether some flags enables this behavior,
+I found <a class="reference external" href="https://man7.org/linux/man-pages/man3/dlmopen.3.html">dlmopen</a> which looked like a perfect candidate so I tried it on a toy example.</p>
+<section id="test-setup">
+<h2>Test setup<a class="headerlink" href="#test-setup" title="Permalink to this headline">¶</a></h2>
+<p>All the code presented here is available on the <a class="reference external" href="https://github.com/mpoquet/dlmopen-test">dlmopen-test</a> git repository.</p>
+<p>This repository contains two shared libraries (compiled as <code class="docutils literal notranslate"><span class="pre">.so</span></code> ELF files)
+and an executable program (also compiled into an ELF file, but with a <code class="docutils literal notranslate"><span class="pre">main</span></code> function to directly execute it).</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">base</span></code> library.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">user</span></code> library, that uses the <code class="docutils literal notranslate"><span class="pre">base</span></code> library (dynamic link).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">runner</span></code> program, that uses the <code class="docutils literal notranslate"><span class="pre">base</span></code> library (dynamic link)
+and loads <code class="docutils literal notranslate"><span class="pre">user</span></code> libraries at runtime (via <code class="docutils literal notranslate"><span class="pre">dlmopen</span></code>) depending on its command-line arguments.</p></li>
+</ul>
+<p>A version number is given to all libraries/programs when they are compiled.
+All compiled ELFs contain a function that <strong>always</strong> returns the version that was given to them at compile-time, and a global <strong>mutable</strong> variable that is initialized with the same value.</p>
+<p>More precisely, the ELFs have the following symbols.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">base</span></code>: <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">base_version()</span></code> function, <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">base_global_value</span></code> variable.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user</span></code>: <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">version()</span></code> function, <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">global_value</span></code> variable and <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span> <span class="pre">fullname()</span></code> that returns a dynamically allocated string that recaps information about a user.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">runner</span></code>: <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">version()</span></code> function, <code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">global_value</span></code> variable and <code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">*</span> <span class="pre">fullname()</span></code> that returns a dynamically allocated string that recaps information about the runner.</p></li>
+</ul>
+<p>The corresponding code is straightforward.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/4c658d8d6ac4011ef3439e97777d89b3/base.c"><code class="xref download docutils literal notranslate"><span class="pre">base.c</span></code></a></span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef VERSION</span>
+<span class="cp">#define VERSION 42</span>
+<span class="cp">#endif</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">base_version</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">VERSION</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">base_global_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VERSION</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/183bbf1a5a22c9bcd2fbbadb9e2cfd83/user.c"><code class="xref download docutils literal notranslate"><span class="pre">user.c</span></code></a></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define _GNU_SOURCE</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#ifndef VERSION</span>
+<span class="cp">#define VERSION 51</span>
+<span class="cp">#endif</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">base_version</span><span class="p">();</span><span class="w"></span>
+<span class="k">extern</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">base_global_value</span><span class="p">;</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">version</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">VERSION</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">global_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VERSION</span><span class="p">;</span><span class="w"></span>
+
+<span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">fullname</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">str</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">asprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_glob=&#39;%d&#39;, my_version=%d, base_glob=&#39;%d&#39;, base_version=%d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">global_value</span><span class="p">,</span><span class="w"> </span><span class="n">version</span><span class="p">(),</span><span class="w"> </span><span class="n">base_global_value</span><span class="p">,</span><span class="w"> </span><span class="n">base_version</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ret</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">str</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>The build system (<a class="reference external" href="https://mesonbuild.com/">Meson</a> here) defines <code class="docutils literal notranslate"><span class="pre">VERSION</span></code> at build-time.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Part of <code class="docutils literal notranslate"><span class="pre">base</span></code>’s build definition (<a class="reference download internal" download="" href="../../_downloads/6ea7e11e80a03c8f1b3c07f79284ba5d/meson.build"><code class="xref download docutils literal notranslate"><span class="pre">meson.build</span></code></a>)</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>project(&#39;dlmopen-test-base&#39;, &#39;c&#39;, default_options : [&#39;c_std=c11&#39;])
+
+base_shared = shared_library(&#39;base&#39;, &#39;base.c&#39;,
+  install: true,
+<span class="hll">  c_args: &#39;-DVERSION=@0@&#39;.format(get_option(&#39;version&#39;))
+</span>)
+</pre></div>
+</div>
+</div>
+<p>Several instances of <code class="docutils literal notranslate"><span class="pre">base</span></code> and <code class="docutils literal notranslate"><span class="pre">user</span></code> are compiled with various <code class="docutils literal notranslate"><span class="pre">VERSION</span></code> values.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">base-0</span></code>, <code class="docutils literal notranslate"><span class="pre">base-1</span></code> and <code class="docutils literal notranslate"><span class="pre">base-2</span></code> with <code class="docutils literal notranslate"><span class="pre">VERSION=x</span></code> for <code class="docutils literal notranslate"><span class="pre">base-x</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user-1</span></code> with <code class="docutils literal notranslate"><span class="pre">VERSION=1</span></code>, that uses <code class="docutils literal notranslate"><span class="pre">base-1</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user-2</span></code> with <code class="docutils literal notranslate"><span class="pre">VERSION=2</span></code>, that uses <code class="docutils literal notranslate"><span class="pre">base-2</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">runner-0</span></code> with <code class="docutils literal notranslate"><span class="pre">VERSION=0</span></code>, that uses <code class="docutils literal notranslate"><span class="pre">base-0</span></code>.</p></li>
+</ul>
+<p>These various ELFs are compiled thanks to the <a class="reference external" href="https://nixos.org/">Nix</a> package manager.
+Nix makes the definition of these combinations simple and makes sure that
+all generated ELFs have fully defined dependencies.
+As I write these lines, this is done by setting <code class="docutils literal notranslate"><span class="pre">DT_RUNPATH</span></code> in compiled ELFs so that
+they load the right versions of their dependencies at runtime.
+Here is the Nix code that describes these combinations.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/d7df3d96b172d3f46a1ec3af3be1883e/default.nix"><code class="xref download docutils literal notranslate"><span class="pre">default.nix</span></code></a></span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-nix notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> pkgs <span class="o">?</span> <span class="nb">import</span> <span class="p">(</span>fetchTarball <span class="s2">&quot;https://github.com/NixOS/nixpkgs/archive/21.05.tar.gz&quot;</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">}:</span>
+
+<span class="k">let</span>
+  <span class="ss">gendrv =</span> v<span class="p">:</span> name<span class="p">:</span> dir<span class="p">:</span> inputs<span class="p">:</span> pkgs<span class="o">.</span>stdenv<span class="o">.</span>mkDerivation <span class="k">rec</span> <span class="p">{</span>
+    <span class="ss">pname =</span> name<span class="p">;</span>
+    <span class="ss">version =</span> v<span class="p">;</span>
+
+    <span class="ss">buildInputs =</span> <span class="p">[</span>pkgs<span class="o">.</span>meson pkgs<span class="o">.</span>ninja pkgs<span class="o">.</span>pkgconfig<span class="p">]</span> <span class="o">++</span> inputs<span class="p">;</span>
+    <span class="ss">src =</span> pkgs<span class="o">.</span>lib<span class="o">.</span>sourceByRegex dir <span class="p">[</span>
+      <span class="s2">&quot;^.*</span><span class="se">\</span><span class="s2">.c&quot;</span>
+      <span class="s2">&quot;^meson</span><span class="se">\</span><span class="s2">.build&quot;</span>
+      <span class="s2">&quot;^meson_options</span><span class="se">\</span><span class="s2">.txt&quot;</span>
+    <span class="p">];</span>
+    <span class="ss">mesonFlags =</span> <span class="p">[</span><span class="s2">&quot;-Dversion=</span><span class="si">${</span>v<span class="si">}</span><span class="s2">&quot;</span><span class="p">];</span>
+  <span class="p">};</span>
+  <span class="ss">self =</span> <span class="k">rec</span> <span class="p">{</span>
+    <span class="ss">base-0 =</span> gendrv <span class="s2">&quot;0&quot;</span> <span class="s2">&quot;base&quot;</span> <span class="o">.</span><span class="l">/base</span> <span class="p">[];</span>
+    <span class="ss">base-1 =</span> gendrv <span class="s2">&quot;1&quot;</span> <span class="s2">&quot;base&quot;</span> <span class="o">.</span><span class="l">/base</span> <span class="p">[];</span>
+    <span class="ss">base-2 =</span> gendrv <span class="s2">&quot;2&quot;</span> <span class="s2">&quot;base&quot;</span> <span class="o">.</span><span class="l">/base</span> <span class="p">[];</span>
+    <span class="ss">user-1 =</span> gendrv <span class="s2">&quot;1&quot;</span> <span class="s2">&quot;user&quot;</span> <span class="o">.</span><span class="l">/user</span> <span class="p">[</span>base-1<span class="p">];</span>
+    <span class="ss">user-2 =</span> gendrv <span class="s2">&quot;2&quot;</span> <span class="s2">&quot;user&quot;</span> <span class="o">.</span><span class="l">/user</span> <span class="p">[</span>base-2<span class="p">];</span>
+    <span class="ss">runner-0 =</span> gendrv <span class="s2">&quot;0&quot;</span> <span class="s2">&quot;runner&quot;</span> <span class="o">.</span><span class="l">/runner</span> <span class="p">[</span>base-0<span class="p">];</span>
+  <span class="p">};</span>
+<span class="k">in</span>
+  self
+</pre></div>
+</div>
+</div>
+</section>
+<section id="runner-code">
+<h2>Runner code<a class="headerlink" href="#runner-code" title="Permalink to this headline">¶</a></h2>
+<p>The runner full code is <a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a>.
+It starts with the same code as in <code class="docutils literal notranslate"><span class="pre">user</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a></span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#define _GNU_SOURCE</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;dlfcn.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#ifndef VERSION</span>
+<span class="cp">#define VERSION 37</span>
+<span class="cp">#endif</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">base_version</span><span class="p">();</span><span class="w"></span>
+<span class="k">extern</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">base_global_value</span><span class="p">;</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">version</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">VERSION</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">global_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VERSION</span><span class="p">;</span><span class="w"></span>
+
+<span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">fullname</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">str</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">asprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;my_glob=&#39;%d&#39;, my_version=%d, base_glob=&#39;%d&#39;, base_version=%d&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">global_value</span><span class="p">,</span><span class="w"> </span><span class="n">version</span><span class="p">(),</span><span class="w"> </span><span class="n">base_global_value</span><span class="p">,</span><span class="w"> </span><span class="n">base_version</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ret</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">str</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>It then defines a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">User</span></code> that enables the runner to access the variables and functions of a <code class="docutils literal notranslate"><span class="pre">user</span></code> instance loaded in memory (via pointers and function pointers).</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a></span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">User</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">handle</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">version</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">global_value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">fullname</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">base_version</span><span class="p">)(</span><span class="kt">void</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">base_global_value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">free</span><span class="p">)(</span><span class="kt">void</span><span class="o">*</span><span class="p">);</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>The code to load a <code class="docutils literal notranslate"><span class="pre">user</span></code> into a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">User</span></code> uses <code class="docutils literal notranslate"><span class="pre">dlmopen</span></code> and <code class="docutils literal notranslate"><span class="pre">dlsym</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a></span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nf">load_symbol</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">symbol</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="hll"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dlsym</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="n">symbol</span><span class="p">);</span><span class="w"></span>
+</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">address</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;dlsym failed: %s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dlerror</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">address</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">populate_user</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">lib_path</span><span class="p">,</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">user</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="hll"><span class="w">    </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dlmopen</span><span class="p">(</span><span class="n">LM_ID_NEWLM</span><span class="p">,</span><span class="w"> </span><span class="n">lib_path</span><span class="p">,</span><span class="w"> </span><span class="n">RTLD_NOW</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">RTLD_LOCAL</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">RTLD_DEEPBIND</span><span class="p">);</span><span class="w"></span>
+</span><span class="hll"><span class="w">    </span><span class="c1">//user-&gt;handle = dlopen(lib_path, RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND);</span>
+</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;dlmopen error: %s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dlerror</span><span class="p">());</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_symbol</span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;version&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">global_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_symbol</span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;global_value&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">fullname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_symbol</span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;fullname&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">base_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_symbol</span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;base_version&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">base_global_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_symbol</span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;base_global_value&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">free</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_symbol</span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;free&quot;</span><span class="p">);</span><span class="w"></span>
+
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">user</span><span class="o">-&gt;</span><span class="n">version</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="o">||</span><span class="w"></span>
+<span class="w">             </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">global_value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="o">||</span><span class="w"></span>
+<span class="w">             </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">fullname</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="o">||</span><span class="w"></span>
+<span class="w">             </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">base_version</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="o">||</span><span class="w"></span>
+<span class="w">             </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">base_global_value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="w"> </span><span class="o">||</span><span class="w"></span>
+<span class="w">             </span><span class="n">user</span><span class="o">-&gt;</span><span class="n">free</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>The rest of <a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a> defines a quick experiment to check whether <code class="docutils literal notranslate"><span class="pre">dlmopen</span></code> fits my need. First, the <code class="docutils literal notranslate"><span class="pre">main</span></code> function reads its command-line arguments (that are paths to <code class="docutils literal notranslate"><span class="pre">user</span></code> ELF files) and load all of them in memory.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a></span><a class="headerlink" href="#id8" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fullname</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;runner fullname: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">str</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Load all user libs</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nb_users</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argc</span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
+<span class="hll"><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">User</span><span class="w"> </span><span class="n">users</span><span class="p">[</span><span class="n">nb_users</span><span class="p">];</span><span class="w"></span>
+</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">argc</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">populate_user</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">users</span><span class="p">[</span><span class="n">i</span><span class="mi">-1</span><span class="p">]))</span><span class="w"></span>
+</span><span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;could not populate user %d, aborting.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">abort</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>Then it prints the various values (by calling the <code class="docutils literal notranslate"><span class="pre">fullname</span></code> function from the <code class="docutils literal notranslate"><span class="pre">runner</span></code>’s ELF itself or from <code class="docutils literal notranslate"><span class="pre">user</span></code> ELFs).</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a></span><a class="headerlink" href="#id9" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;All users have been loaded.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fullname</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;runner fullname: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">str</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">str</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nb_users</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">users</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">fullname</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;user %d fullname: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">users</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">free</span><span class="p">(</span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>During its execution, <code class="docutils literal notranslate"><span class="pre">runner</span></code> changes the values of all global variables to make sure the desired ones get updated (<strong>and them only</strong>).</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/b02824621d1ca01f33071cd0d2f2c11e/runner.c"><code class="xref download docutils literal notranslate"><span class="pre">runner.c</span></code></a></span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Changing global values.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">global_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">base_global_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">420</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nb_users</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="o">*</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">global_value</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="o">*</span><span class="p">(</span><span class="n">users</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">base_global_value</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
+</div>
+<p>Printings are done at the following steps.</p>
+<ul class="simple">
+<li><p>At the <code class="docutils literal notranslate"><span class="pre">main</span></code> function’s beginning (only for <code class="docutils literal notranslate"><span class="pre">runner</span></code>).</p></li>
+<li><p>After all <code class="docutils literal notranslate"><span class="pre">user</span></code> ELFs have been loaded.</p></li>
+<li><p>After all global variables have been modified.</p></li>
+<li><p>At the <code class="docutils literal notranslate"><span class="pre">main</span></code> function’s ending (only for <code class="docutils literal notranslate"><span class="pre">runner</span></code>).</p></li>
+</ul>
+</section>
+<section id="does-it-work">
+<h2>Does it work?<a class="headerlink" href="#does-it-work" title="Permalink to this headline">¶</a></h2>
+<p>First, <code class="docutils literal notranslate"><span class="pre">user</span></code> ELFs can be compiled via <code class="docutils literal notranslate"><span class="pre">nix-build</span></code> commands.</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/f6aebddbddfcfac23fe7e78b99510a11/generate-elfs.bash"><code class="xref download docutils literal notranslate"><span class="pre">generate-elfs.bash</span></code></a></span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+nix-build . -A user-1 -o result-user1
+nix-build . -A user-2 -o result-user2
+nix-build . -A runner-0 -o result
+</pre></div>
+</div>
+</div>
+<p>The following code loads <code class="docutils literal notranslate"><span class="pre">user-1</span></code> and <code class="docutils literal notranslate"><span class="pre">user-2</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/6757d770f685470cc06c47fd620fdf00/run-different-libs.bash"><code class="xref download docutils literal notranslate"><span class="pre">run-different-libs.bash</span></code></a></span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+./result/bin/runner <span class="k">$(</span>realpath ./result-user1/lib/libuser.so<span class="k">)</span> <span class="k">$(</span>realpath ./result-user2/lib/libuser.so<span class="k">)</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Everything looks great in the output log :).</strong>
+All values are the expected one when the <code class="docutils literal notranslate"><span class="pre">user</span></code> ELFs are loaded,
+and changing global variables had the expected outcome.</p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Output log of <a class="reference download internal" download="" href="../../_downloads/6757d770f685470cc06c47fd620fdf00/run-different-libs.bash"><code class="xref download docutils literal notranslate"><span class="pre">run-different-libs.bash</span></code></a></span><a class="headerlink" href="#id13" title="Permalink to this code">¶</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>runner fullname: my_glob=&#39;0&#39;, my_version=0, base_glob=&#39;0&#39;, base_version=0
+All users have been loaded.
+runner fullname: my_glob=&#39;0&#39;, my_version=0, base_glob=&#39;0&#39;, base_version=0
+user 0 fullname: my_glob=&#39;1&#39;, my_version=1, base_glob=&#39;1&#39;, base_version=1
+user 1 fullname: my_glob=&#39;2&#39;, my_version=2, base_glob=&#39;2&#39;, base_version=2
+Changing global values.
+Printing fullnames again.
+runner fullname: my_glob=&#39;42&#39;, my_version=0, base_glob=&#39;420&#39;, base_version=0
+user 0 fullname: my_glob=&#39;10&#39;, my_version=1, base_glob=&#39;100&#39;, base_version=1
+user 1 fullname: my_glob=&#39;20&#39;, my_version=2, base_glob=&#39;200&#39;, base_version=2
+Removing user libs from memory.
+runner fullname: my_glob=&#39;42&#39;, my_version=0, base_glob=&#39;420&#39;, base_version=0
+</pre></div>
+</div>
+</div>
+<p>And <strong>everything also looks great when the exact same library is loaded twice :)</strong>.
+<code class="docutils literal notranslate"><span class="pre">user</span></code> ELFs have independent global variable, and their <code class="docutils literal notranslate"><span class="pre">base</span></code> dependency too.</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text"><a class="reference download internal" download="" href="../../_downloads/c2a1113fa7c26fadecdd094665a002e4/run-same-lib.bash"><code class="xref download docutils literal notranslate"><span class="pre">run-same-lib.bash</span></code></a></span><a class="headerlink" href="#id14" title="Permalink to this code">¶</a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+./result/bin/runner <span class="k">$(</span>realpath ./result-user1/lib/libuser.so<span class="k">)</span> <span class="k">$(</span>realpath ./result-user1/lib/libuser.so<span class="k">)</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">Output log of <a class="reference download internal" download="" href="../../_downloads/c2a1113fa7c26fadecdd094665a002e4/run-same-lib.bash"><code class="xref download docutils literal notranslate"><span class="pre">run-same-lib.bash</span></code></a></span><a class="headerlink" href="#id15" title="Permalink to this code">¶</a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>runner fullname: my_glob=&#39;0&#39;, my_version=0, base_glob=&#39;0&#39;, base_version=0
+All users have been loaded.
+runner fullname: my_glob=&#39;0&#39;, my_version=0, base_glob=&#39;0&#39;, base_version=0
+user 0 fullname: my_glob=&#39;1&#39;, my_version=1, base_glob=&#39;1&#39;, base_version=1
+user 1 fullname: my_glob=&#39;1&#39;, my_version=1, base_glob=&#39;1&#39;, base_version=1
+Changing global values.
+Printing fullnames again.
+runner fullname: my_glob=&#39;42&#39;, my_version=0, base_glob=&#39;420&#39;, base_version=0
+user 0 fullname: my_glob=&#39;10&#39;, my_version=1, base_glob=&#39;100&#39;, base_version=1
+user 1 fullname: my_glob=&#39;20&#39;, my_version=1, base_glob=&#39;200&#39;, base_version=1
+Removing user libs from memory.
+runner fullname: my_glob=&#39;42&#39;, my_version=0, base_glob=&#39;420&#39;, base_version=0
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy; Millian Poquet.
+      License <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.
+      Made with <a href="http://www.sphinx-doc.org/en/master/" rel="nofollow">Sphinx</a>
+      (custom <a href="https://github.com/bitprophet/alabaster" rel="nofollow">Alabaster</a> theme).
+      <a href="../../_sources/blog/2021-09-isolated-dynamic-library-loading-with-dlmopen/index.rst.txt"
+          rel="nofollow">Page source</a>.
+      <a href="https://github.com/mpoquet/mpoquet.github.io/tree/sphinx" rel="nofollow">Git<a/>.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1017 @@
+cflags=-O2 -Wall -Wextra
+init = INIT_NOP
+print = PRINT_NOP
+exit = EXIT_EXIT
+fin = FIN_NOP
+
+rule cc
+  command = gcc ${cflags} -DINIT=${init} -DPRINT=${print} -DEXIT=${exit} -DFIN=${fin} -o $out $in
+
+build nop-nop-exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nop-nop-exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nop-nop-_exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nop-nop-_exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nop-nop-segv-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nop-nop-segv-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nop-p-exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nop-p-exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nop-p-_exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nop-p-_exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nop-p-segv-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nop-p-segv-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nop-pf-exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nop-pf-exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nop-pf-_exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nop-pf-_exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nop-pf-segv-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nop-pf-segv-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nop-pn-exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nop-pn-exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nop-pn-_exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nop-pn-_exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nop-pn-segv-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nop-pn-segv-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nop-pnf-exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nop-pnf-exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nop-pnf-_exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nop-pnf-_exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nop-pnf-segv-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nop-pnf-segv-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nop-w-exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nop-w-exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nop-w-_exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nop-w-_exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nop-w-segv-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nop-w-segv-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nop-wn-exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nop-wn-exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nop-wn-_exit-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nop-wn-_exit-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nop-wn-segv-nop: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nop-wn-segv-wait: cc base.c
+  init = INIT_NOP
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nbf-nop-exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nbf-nop-exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nbf-nop-_exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nbf-nop-_exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nbf-nop-segv-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nbf-nop-segv-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nbf-p-exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nbf-p-exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nbf-p-_exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nbf-p-_exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nbf-p-segv-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nbf-p-segv-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nbf-pf-exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nbf-pf-exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nbf-pf-_exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nbf-pf-_exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nbf-pf-segv-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nbf-pf-segv-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nbf-pn-exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nbf-pn-exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nbf-pn-_exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nbf-pn-_exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nbf-pn-segv-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nbf-pn-segv-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nbf-pnf-exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nbf-pnf-exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nbf-pnf-_exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nbf-pnf-_exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nbf-pnf-segv-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nbf-pnf-segv-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nbf-w-exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nbf-w-exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nbf-w-_exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nbf-w-_exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nbf-w-segv-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nbf-w-segv-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build nbf-wn-exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build nbf-wn-exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build nbf-wn-_exit-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build nbf-wn-_exit-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build nbf-wn-segv-nop: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build nbf-wn-segv-wait: cc base.c
+  init = INIT_UNBUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build lbf-nop-exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build lbf-nop-exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build lbf-nop-_exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build lbf-nop-_exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build lbf-nop-segv-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build lbf-nop-segv-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build lbf-p-exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build lbf-p-exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build lbf-p-_exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build lbf-p-_exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build lbf-p-segv-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build lbf-p-segv-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build lbf-pf-exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build lbf-pf-exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build lbf-pf-_exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build lbf-pf-_exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build lbf-pf-segv-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build lbf-pf-segv-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build lbf-pn-exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build lbf-pn-exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build lbf-pn-_exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build lbf-pn-_exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build lbf-pn-segv-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build lbf-pn-segv-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build lbf-pnf-exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build lbf-pnf-exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build lbf-pnf-_exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build lbf-pnf-_exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build lbf-pnf-segv-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build lbf-pnf-segv-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build lbf-w-exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build lbf-w-exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build lbf-w-_exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build lbf-w-_exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build lbf-w-segv-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build lbf-w-segv-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build lbf-wn-exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build lbf-wn-exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build lbf-wn-_exit-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build lbf-wn-_exit-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build lbf-wn-segv-nop: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build lbf-wn-segv-wait: cc base.c
+  init = INIT_LINE_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build fbf-nop-exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build fbf-nop-exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build fbf-nop-_exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build fbf-nop-_exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build fbf-nop-segv-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build fbf-nop-segv-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_NOP
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build fbf-p-exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build fbf-p-exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build fbf-p-_exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build fbf-p-_exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build fbf-p-segv-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build fbf-p-segv-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build fbf-pf-exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build fbf-pf-exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build fbf-pf-_exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build fbf-pf-_exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build fbf-pf-segv-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build fbf-pf-segv-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build fbf-pn-exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build fbf-pn-exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build fbf-pn-_exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build fbf-pn-_exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build fbf-pn-segv-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build fbf-pn-segv-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build fbf-pnf-exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build fbf-pnf-exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build fbf-pnf-_exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build fbf-pnf-_exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build fbf-pnf-segv-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build fbf-pnf-segv-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_PRINTF_NEWLINE_FFLUSH
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build fbf-w-exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build fbf-w-exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build fbf-w-_exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build fbf-w-_exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build fbf-w-segv-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build fbf-w-segv-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
+build fbf-wn-exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_NOP
+
+build fbf-wn-exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_EXIT
+  fin = FIN_WAITALL
+
+build fbf-wn-_exit-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_NOP
+
+build fbf-wn-_exit-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT__EXIT
+  fin = FIN_WAITALL
+
+build fbf-wn-segv-nop: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_NOP
+
+build fbf-wn-segv-wait: cc base.c
+  init = INIT_FULLY_BUFFERED
+  print = PRINT_WRITE_NEWLINE
+  exit = EXIT_SEGFAULT
+  fin = FIN_WAITALL
+
