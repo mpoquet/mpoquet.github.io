@@ -1,19 +1,25 @@
 Job offers
 ==========
 
-Internships / Stages (2022-2023)
+Internships / Stages (2023-2024)
 --------------------------------
 
-- :download:`Energy/performance tradoffs of federated learning algorithms <jobs/delight-fl-energy-perf-tradeoffs.pdf>`
-- :download:`Frugal prediction of the load of HPC centers <jobs/hpc-center-load-prediction.pdf>`
-- :download:`Real-World Evaluation of Batsim Probes <jobs/batprobes-real-world-eval.pdf>`
-- :download:`Performance evaluation and optimization of resource set libraries <jobs/resource-set-libs-eval-opti.pdf>`
-
-Projets (2022-2023)
+Projets (2023-2024)
 -------------------
+- :download:`Simulation de services dans Batsim <jobs/batsim-service.pdf>`
+- :download:`Carbone et placement de services sur architectures Cloud/Edge <jobs/batsim-service-edge-co2.pdf>`
+- :download:`Émulation du scheduling de StarPU dans Batsim <jobs/batsim-starpu.pdf>`
+- :download:`Émulation du scheduling de Linux dans Batsim <jobs/batsim-linux.pdf>`
+- :download:`Rust: Are we SimGrid yet? <jobs/batsim-simgrid-rust.pdf>`
+- :download:`Exécution distribuée contrôlée de workﬂows d'expériences <jobs/dist-cwl.pdf>`
+- :download:`Démon de contrôle de processus distant en Rust <jobs/process-ctrld-rust.pdf>`
+- :download:`Bibliothèque Typst pour la génération de sujets d'examen <jobs/qcm-typst.pdf>`
+- :download:`ROC pour l'analyse automatique de copies d'examen <jobs/qcm-parse-ocr.pdf>`
+- :download:`GUI de vériﬁcation/correction de scans de copies d'examen <jobs/qcm-errfix-ui.pdf>`
+- :download:`Visualisation d'espaces d'adressage virtuel et physique <jobs/vasviz.pdf>`
 
-- :download:`Lighter : une alternative légère et descriptive à Beamer <jobs/projet-lighter.pdf>`
-- :download:`Suite d'outils pour QCM++ automatiques <jobs/projet-qcm.pdf>`
+Anciens projets encore ouverts
+------------------------------
+
 - :download:`Outils pour l'enseignement des sémaphores <jobs/projet-simgrid-semaphore.pdf>`
 - :download:`Outil de création de figures pour l'enseignement en informatique <jobs/projet-generation-figures.pdf>`
-- :download:`Implémentation Rust de cgvg <jobs/projet-cgvg-rust.pdf>`
