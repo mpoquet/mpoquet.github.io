@@ -18,6 +18,18 @@ Research Interests
 Conferences and Workshops
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+- Danilo Carastan-Santos, Georges Da Costa, Millian Poquet, Patricia Stolf, Denis Trystram.
+  **Light-weight prediction for improving energy consumption in HPC platforms.**
+  Euro-Par 2024.
+  `HAL <https://hal.science/hal-04566184>`__
+  `reproduce <https://zenodo.org/doi/10.5281/zenodo.11173631>`__
+
+- Quentin Guilloteau, Florina M. Ciorba, Millian Poquet, Dorian Goepp, Olivier Richard.
+  **Longevity of Artifacts in Leading Parallel and Distributed Systems Conferences: a Review of the State of the Practice in 2023.**
+  ACM REP 2024.
+  `HAL <https://hal.science/hal-04562691>`__
+  `reproduce <https://zenodo.org/doi/10.5281/zenodo.10650804>`__
+
 - Quentin Guilloteau, Jonathan Bleuzen, Millian Poquet, Olivier Richard.
   **Painless Transposition of Reproducible Distributed Environments with NixOS Compose.**
   IEEE Cluster 2022.
