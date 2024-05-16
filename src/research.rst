@@ -70,6 +70,11 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **Batsim Returns?**
+  Aussois 2024.
+  :download:`slides <research/240516-aussois-batsim.pdf>`
+
+- Millian Poquet.
   **SimGrid and Batsim Overview.**
   REGALE workshop, 2023-02.
   :download:`slides <research/230223-sg-energy-batsim.pdf>`
