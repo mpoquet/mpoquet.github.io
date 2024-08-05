@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 
-nix-build
+nix build
 rm -rf /tmp/site-dump
 mkdir /tmp/site-dump
 cp -r --no-preserve=all result/* /tmp/site-dump/
