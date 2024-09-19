@@ -1,16 +1,18 @@
-Contact
-=======
+.. _contact_me:
+
+Contact me
+==========
+
+Feel free to email me or to come and say hi to my office.
+My phone is in silent mode and I look at it twice a day, so call me at your own risk ;).
 
 Email
 -----
-Replace ``hollow`` by ``poquet`` to get my real email addresses.
-This is to hinder `spambots <https://en.wikipedia.org/wiki/Spambot#E-mail_spambots>`__.
-
-- millian.hollow@irit.fr
-- millian.hollow@gmail.com
+My email is ``millian.poquet`` at either ``irit.fr`` or ``gmail.com``.
 
 Office
 ------
 | IRIT — Bureau 469
-| Cours Rose Dieng-Kuntz
+| 120 Cours Rose Dieng-Kuntz
+| Campus Univ. Toulouse III
 | 31400 Toulouse, France
