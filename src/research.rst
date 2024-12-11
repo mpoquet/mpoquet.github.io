@@ -82,6 +82,12 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **Overview of my research activities (10 years in 10 minutes).**
+  IRIT scientific day, 2024-12.
+  :download:`slides <research/241213-irit-scientific-day.pdf>`
+  :download:`rebuild slides <research/241213-irit-scientific-day.tar.xz>`
+
+- Millian Poquet.
   **Batsim Returns?**
   Aussois 2024.
   :download:`slides <research/240516-aussois-batsim.pdf>`
