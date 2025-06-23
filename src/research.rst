@@ -82,6 +82,12 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **Introduction to Nix.**
+  ComPAS'25, 2025-06-24.
+  :download:`slides <research/250624-nix-nxc-tuto-compas25.pdf>`
+  :download:`rebuild slides <research/250624-nix-nxc-tuto-compas25.tar.xz>`
+
+- Millian Poquet.
   **Overview of my research activities (10 years in 10 minutes).**
   IRIT scientific day, 2024-12.
   :download:`slides <research/241213-irit-scientific-day.pdf>`
