@@ -82,6 +82,12 @@ Presentations, Tutorials…
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Millian Poquet.
+  **Experimenting for the Worst-Case Reviewer.**
+  IRIT PhD days — ASR department, 2025-07-08.
+  :download:`slides <research/250708-irit-expe-worst-case-reviewer.pdf>`
+  :download:`rebuild slides <research/250708-irit-expe-worst-case-reviewer.tar.xz>`
+
+- Millian Poquet.
   **Introduction to Nix.**
   ComPAS'25, 2025-06-24.
   :download:`slides <research/250624-nix-nxc-tuto-compas25.pdf>`
