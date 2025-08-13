@@ -1,12 +1,21 @@
 Teaching
 ========
 
-.. contents:: :local:
+Since 2022 most of my teaching service is at UT_ around Operating Systems and Parallelism.
+
+- Bases d'Architecture et de Système (L1 info) : TD, TP
+- Systèmes Réseaux 1 (L2 info) : CTD, TP
+- Systèmes Réseaux 2 (L3 info) : CTD, TP
+- Parallélisme (M1 tronc commun) : TD, TP
+- Programmation multitâche (UPSSITECH SRI2A) : Responsable UE, Cours, TD, TP
+- Virtualisation système (M2 SECIL) : Responsable UE, Cours, TD, TP
+- Conception de systèmes d'exploitation (M2 SECIL) : Responsable UE, Cours, TD, TP
+
 
 Software Quality (2019-2021)
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-I am in charge of a new software quality / DevOps module for a professional degree at University Institute of Technology of Grenoble (IUT2 Grenoble, LP ASSR).
+I was in charge of a software quality / DevOps module for a professional degree at University Institute of Technology of Grenoble (IUT2 Grenoble, LP ASSR).
 
 - deciding the pedagogical content
 - design of lecture/exercise/practical work/project/exam resources
@@ -29,22 +38,22 @@ Resources (in french) of the course given in 2021 are available on this website.
 Most resources of the course given in 2019 are available on the `DevOps course Git repository <https://framagit.org/devops-course/devops-course/>`_.
 
 Big Data (2019)
----------------
+^^^^^^^^^^^^^^^
 
 I gave practical work sessions about Hadoop and Spark to ENSIMAG third-year students (≈ second-year master’s degree students).
 
 Advanced algorithms (2017)
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 I worked on lessons about advanced algorithms to ENSIMAG second-year students
-(≈ first-year master’s degree students). I was in charge of:
+(≈ first-year master's degree students). I was in charge of:
 
 -  design of the practical work
 -  evaluation of the students' work
 
 
 Introduction to algorithms and programming (2015-2017)
-------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 I had the opportunity to teach introduction to algorithms and
 programming to first-year science students.
@@ -88,7 +97,7 @@ Here are resources about this class (in French).
 
 
 Office automation (2014)
-------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 During my PhD, I was first teaching assistant of office automation classes.
 I worked with second-year Pharmacy students from Univ. Grenoble.
@@ -99,9 +108,11 @@ I worked with second-year Pharmacy students from Univ. Grenoble.
 
 
 Tutoring (2010-2014)
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 During my studies, I worked at University Institute of Technology of Orléans (IUT Orléans).
 
 -  giving support courses in the various IT subjects taught at the IUT
 -  following and helping students about their IT projects
+
+.. _UT: https://www.univ-tlse3.fr/

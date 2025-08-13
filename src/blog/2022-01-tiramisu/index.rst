@@ -1,7 +1,7 @@
 Tiramisu
 ========
 
-Je fais régulièrement du tiramisu depuis quelques mois et je commence à être content de l'équilibre que donne cette recette donc je l'ai rédigée ici !
+J'ai régulièrement fait du tiramisu en 2022 et j'étais content de l'équilibre de cette recette donc je l'ai rédigée ici !
 C'est un tiramisu très classique qui ne s'écarte du standard que par sa garniture : un peu de chocolat rapé au lieu de poudre de cacao.
 Aucun n'alcool n'est utilisé.
 

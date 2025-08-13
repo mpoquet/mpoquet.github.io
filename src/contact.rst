@@ -8,7 +8,7 @@ My phone is in silent mode and I look at it twice a day, so call me at your own 
 
 Email
 -----
-My email is ``millian.poquet`` at either ``irit.fr`` or ``gmail.com``.
+My email is ``millian.poquet`` at either ``utoulouse.fr`` or ``irit.fr``.
 
 Office
 ------

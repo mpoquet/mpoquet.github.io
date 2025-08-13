@@ -7,10 +7,9 @@
    about.rst
    research.rst
    teaching.rst
-   software.rst
-   contact.rst
+   supervisions.rst
    Jobs <jobs.rst>
    Blog <blog.rst>
-   Miam <miam.rst>
+   contact.rst
 
 .. title :: Home
