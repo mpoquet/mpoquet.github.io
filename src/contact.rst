@@ -14,5 +14,5 @@ Office
 ------
 | IRIT — Bureau 469
 | 120 Cours Rose Dieng-Kuntz
-| Campus Univ. Toulouse III
+| Campus Univ. Toulouse
 | 31400 Toulouse, France

@@ -6,7 +6,7 @@ Please refer to https://www.irit.fr/SEPIA/open-positions/ for a list of currentl
 
 Do feel free to :ref:`contact_me` if you would like to work with us on similar questions.
 
-The list below contains details on the development and research projects that I can supervise this year for Bachelor and Master students at Univ. Toulouse III.
+The list below contains details on the development and research projects that I can supervise this year for Bachelor and Master students at Univ. Toulouse.
 
 Sujets de projet (2024-2025)
 ----------------------------
