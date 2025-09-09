@@ -8,31 +8,20 @@ Do feel free to :ref:`contact_me` if you would like to work with us on similar q
 
 The list below contains details on the development and research projects that I can supervise this year for Bachelor and Master students at Univ. Toulouse.
 
-Sujets de projet (2024-2025)
+Sujets de projet (2025-2026)
 ----------------------------
 
-Expérimentation réelle et reproductibilité
+Problématiques liées à l'enseignement
 
-- :download:`Exécution distribuée contrôlée de workﬂows d'expériences <jobs/dist-cwl.pdf>`
-- :download:`Démon de contrôle de processus distant en Rust <jobs/process-ctrld-rust.pdf>`
-- :download:`Runtime léger de conteneurs pour exécutions reproductibles <jobs/repro-cont-runtime.pdf>`
-- :download:`Figures reproductibles bit à bit <jobs/bin-rep-fig.pdf>`
+- :download:`Hekzam : détection précise de cases dans un espace déformé <jobs/hekzam-distorted-boxes.pdf>`
+- :download:`Hekzam : ROC et réseaux de neurones frugaux <jobs/hekzam-frugal-nn.pdf>`
+- :download:`Hekzam : fuzzy matching de numéros identifiants <jobs/hekzam-id-matching.pdf>`
+- :download:`Visualisation mémoire pour l'apprentissage et le debugging <jobs/mem-viz-dbg.pdf>`
 
-Optimisation énergétique / carbone
+Problématiques liées à la recherche
 
-- :download:`Placement et empreinte carbone sur Batsim <jobs/batcarbon.pdf>`
-- :download:`Émulation de l’extinction de cœurs Rasperry Pi 3b dans QEMU <jobs/qemu-spinloop.pdf>`
-- :download:`Hekzam : marqueurs sobres <jobs/hekzam-markers.pdf>`
-- :download:`Hekzam : compromis précision/performance de l'OCR <jobs/hekzam-ocr.pdf>`
-
-Contributions à Batsim
-
-- :download:`Test et évaluation des sondes de Batsim <jobs/batprobes.pdf>`
-- :download:`Batprotocol et algorithmes d’ordonnancement en Rust <jobs/batrust.pdf>`
-
-Anciens sujets de projet toujours ouverts
------------------------------------------
-- :download:`Émulation du scheduling de StarPU dans Batsim <jobs/batsim-starpu.pdf>`
-- :download:`Émulation du scheduling de Linux dans Batsim <jobs/batsim-linux.pdf>`
-- :download:`Visualisation d'espaces d'adressage virtuel et physique <jobs/vasviz.pdf>`
-- :download:`Performance et coût carbone de la génération de slides <jobs/carbon-slides.pdf>`
+- :download:`Modélisation et simulation d'applications CPU monothread sur une machine <jobs/model-simu-interf-intranode.pdf>`
+- :download:`Intégrer ccache dans Nix <jobs/nix-ccache.pdf>`
+- :download:`Optimiser la taille des environnements Nix <jobs/nix-img-size.pdf>`
+- :download:`Outils d'analyse et de visualisation de traces d'exécution <jobs/wload-analysis-viz.pdf>`
+- :download:`Signpost : analyse théorique et génération contrainte de grilles <jobs/signpost.pdf>`
