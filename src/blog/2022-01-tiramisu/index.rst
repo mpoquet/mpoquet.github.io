@@ -3,11 +3,11 @@ Tiramisu
 
 J'ai régulièrement fait du tiramisu en 2022 et j'étais content de l'équilibre de cette recette donc je l'ai rédigée ici !
 C'est un tiramisu très classique qui ne s'écarte du standard que par sa garniture : un peu de chocolat rapé au lieu de poudre de cacao.
-Aucun n'alcool n'est utilisé.
+Aucun alcool n'est utilisé.
 
 Cette recette utilise des œufs crus non pasteurisés,
 ce qui peut être risqué (notamment pour les jeunes enfants, personnes âgées, femmes enceintes ou si votre système immunitaire est affaibli).
-Si cela vous inquiète même avec des œufs très frais, vous pouvez utiliser des blancs et jaunes d'œuf liquides pasteurisés à la place (trouvables dans le commerce).
+Si cela vous inquiète même avec des œufs très frais, vous pouvez utiliser des blancs et jaunes d'œufs liquides pasteurisés à la place (trouvables dans le commerce).
 
 Ingrédients (pour 4 à 6 personnes)
 ----------------------------------
@@ -60,13 +60,13 @@ Faire le café.
 Faire la crème.
 
 2. Séparer les blancs des jaunes d'œufs.  
-   S'assurer qu'il n'y pas de jaune dans les blancs, et que ni blancs ni jaunes n'aient de coquilles.
-3. Placer le sucre, le sucre vanillé et les jaunes d'œuf dans un saladier.  
+   S'assurer qu'il n'y ait pas de jaune dans les blancs, et que ni blancs ni jaunes n'aient de coquilles.
+3. Placer le sucre, le sucre vanillé et les jaunes d'œufs dans un saladier.  
    Battre au fouet pour obtenir un mélange homogène (les cristaux de sucre doivent tous avoir fondu).
 4. Incorporer au fouet le mascarpone au mélange précédent jusqu'à obtenir un mélange homogène
    (il ne doit pas rester de morceaux de mascarpone dans la crème).
    Je fais cette incorporation en trois fois.
-5. Dans un autre saladier, mettre une pincée de sel dans les blancs d'œuf et les monter en neige au fouet ou au batteur électrique
+5. Dans un autre saladier, mettre une pincée de sel dans les blancs d'œufs et les monter en neige au fouet ou au batteur électrique
    (ne pas les monter trop fermement sinon ils seront plus difficiles à incorporer).
 6. Incorporer les blancs en neige dans votre crème (jaunes + sucres + mascarpone) sans les casser
    (`tutoriel vidéo sur l'incorporation des blancs en neige`_ au fouet et à la spatule).
@@ -108,7 +108,7 @@ Variations
 
 - Vous pouvez ajouter différents arômes au liquide d'imbibage, comme du marsala.
 - Pour mieux contrôler le goût de vanille vous pouvez utiliser de l'extrait de vanille ou une gousse de vanille.
-- Pour une crème au goût plus prononcé mais moins aérée, on peut ne se servir que des jaunes d'œuf (ce qui vous laisse des blancs d'œufs sur les bras !).
+- Pour une crème au goût plus prononcé mais moins aérée, on peut ne se servir que des jaunes d'œufs (ce qui vous laisse des blancs d'œufs sur les bras !).
 - Personnellement, je trouve plus intéressant de recouvrir le tiramisu d'un peu de chocolat rapé que de poudre de cacao.
   Je trouve que ça donne une attaque moins dérangeante en bouche, que ce soit en terme de goût comme de texture.
   Mais on peut bien sûr saupoudrer le tiramisu de poudre de cacao pour un côté plus classique.
@@ -123,10 +123,10 @@ Ces recettes vidéo font des recettes différentes et contiennent de nombreux co
 
 - Cette `recette vidéo du Meilleur du Chef`_ fait un tiramisu plus complexe,
   en faisant des biscuits à la cuillère maison,
-  en pasteurisant les jaunes d'œuf et
+  en pasteurisant les jaunes d'œufs et
   en apportant beaucoup plus de soin à la présentation du plat.
 - Cette `recette vidéo de Vincenzo's Plate`_ (en anglais) fait un tiramisu classique qui se veut authentique
-  mais utilise une *crème* différente sur chaque couche : une à base de jaunes d'œuf et l'autre à base de blancs en neige.
+  mais utilise une *crème* différente sur chaque couche : une à base de jaunes d'œufs et l'autre à base de blancs en neige.
 
 .. _tutoriel vidéo sur l'incorporation des blancs en neige: https://www.youtube.com/watch?v=WuFDFEtImms
 .. _recette vidéo du Meilleur du Chef: https://www.youtube.com/watch?v=q_CxxrmDNZM
