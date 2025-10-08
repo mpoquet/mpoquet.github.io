@@ -39,6 +39,8 @@ Interns
   2017-02 to 2017-07.
   Accuracy/performance tradeoff of the replay in simulation of aggregated time-independent SimGrid MPI traces.
 
+.. _supervised_project_groups:
+
 Project groups
 --------------
 
