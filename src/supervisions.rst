@@ -14,6 +14,9 @@ PhD students
 Interns
 -------
 
+- `Téo Tinarrage <https://www.linkedin.com/in/t%C3%A9o-tinarrage-906457168>`__, M2 SECIL, UT_, with Georges Da Costa.
+  2024-11 to 2025-04.
+  Mojitos/Alumet coupling for distributed monitoring.
 - `Yaël Bourguignon <https://www.linkedin.com/in/ya%C3%ABl-bourguignon-056789244>`__, M1 SECIL, CNRS, with Georges Da Costa.
   2025-04 to 2025-07.
   System-level scheduling for HPC workloads with sched-ext.
