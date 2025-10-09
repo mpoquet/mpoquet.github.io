@@ -203,8 +203,8 @@ This can lead to some misleading prints when <code class="docutils literal notra
 This new version (<code class="docutils literal notranslate"><span class="pre">tiny-wait</span></code>, that can be compiled with <code class="docutils literal notranslate"><span class="pre">gcc</span> <span class="pre">-c</span> <span class="pre">tiny-wait.S</span> <span class="pre">&amp;&amp;</span> <span class="pre">ld</span> <span class="pre">-o</span> <span class="pre">tiny-wait</span> <span class="pre">tiny-wait.o</span></code>) always prints consistent messages, even when its execution is automated in sequence.</p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">diff of <a class="reference download internal" download="" href="../../_downloads/25505cff6ee01b667518cf84a64e8052/tiny-wait.S"><code class="xref download docutils literal notranslate"><span class="pre">tiny-wait.S</span></code></a> over <a class="reference download internal" download="" href="../../_downloads/924f72c352624078598f340696ea3aca/tiny.S"><code class="xref download docutils literal notranslate"><span class="pre">tiny.S</span></code></a></span><a class="headerlink" href="#id5" title="Link to this code">¶</a></div>
-<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /build/vpr3ai0knq1n3rbgwqsxbd5s36hgvy9r-source/src/blog/2022-12-printf-message-loss/tiny.S</span>
-<span class="gi">+++ /build/vpr3ai0knq1n3rbgwqsxbd5s36hgvy9r-source/src/blog/2022-12-printf-message-loss/tiny-wait.S</span>
+<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /build/1icijd482a2g4lsz9mfd8vy43ngkc9kb-source/src/blog/2022-12-printf-message-loss/tiny.S</span>
+<span class="gi">+++ /build/1icijd482a2g4lsz9mfd8vy43ngkc9kb-source/src/blog/2022-12-printf-message-loss/tiny-wait.S</span>
 <span class="gu">@@ -23,6 +23,18 @@</span>
 <span class="w"> </span>    incq %rbx
 <span class="w"> </span>    cmp $10, %rbx
