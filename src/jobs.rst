@@ -12,6 +12,8 @@ I may be interested in supervising other projects. Do feel free to :ref:`contact
 Sujets de projet (2025-2026)
 ----------------------------
 
+Here are :download:`slides for M1 projects <jobs/slides-m1.pdf>`.
+
 Correction semi-automatique d'examens
 
 - :download:`Hekzam : détection précise de cases dans un espace déformé <jobs/hekzam-distorted-boxes.pdf>`
