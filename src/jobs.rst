@@ -12,17 +12,26 @@ I may be interested in supervising other projects. Do feel free to :ref:`contact
 Sujets de projet (2025-2026)
 ----------------------------
 
-Problématiques liées à l'enseignement
+Correction semi-automatique d'examens
 
 - :download:`Hekzam : détection précise de cases dans un espace déformé <jobs/hekzam-distorted-boxes.pdf>`
 - :download:`Hekzam : ROC et réseaux de neurones frugaux <jobs/hekzam-frugal-nn.pdf>`
 - :download:`Hekzam : fuzzy matching de numéros identifiants <jobs/hekzam-id-matching.pdf>`
-- :download:`Visualisation mémoire pour l'apprentissage et le debugging <jobs/mem-viz-dbg.pdf>`
 
-Problématiques liées à la recherche
+Plateformes de calcul à grande échelle et leur étude
 
 - :download:`Modélisation et simulation d'applications CPU monothread sur une machine <jobs/model-simu-interf-intranode.pdf>`
-- :download:`Intégrer ccache dans Nix <jobs/nix-ccache.pdf>`
-- :download:`Optimiser la taille des environnements Nix <jobs/nix-img-size.pdf>`
 - :download:`Outils d'analyse et de visualisation de traces d'exécution <jobs/wload-analysis-viz.pdf>`
+- :download:`Structures de données pour ensemble de ressources en Rust <jobs/resource-set-ds-rust.pdf>`
+- :download:`Batch Scheduling in Rust <jobs/batch-scheduling-rust.pdf>`
+- :download:`Rusty Bataar <jobs/rusty-bataar.pdf>`
+
+Réduire l'impact environnemental de Nix
+
+- :download:`Optimiser la taille des environnements Nix <jobs/nix-img-size.pdf>`
+- :download:`Intégrer ccache dans Nix <jobs/nix-ccache.pdf>`
+
+Autres
+
+- :download:`Visualisation mémoire pour l'apprentissage et le debugging <jobs/mem-viz-dbg.pdf>`
 - :download:`Signpost : analyse théorique et génération contrainte de grilles <jobs/signpost.pdf>`
